@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -14,8 +15,8 @@ class ExchangeType(Enum):
 
 
 class TickerBase(BaseModel):
+    id: str
     name: str
-    ticker: str
-    upstox_instrument_key: str
-    instrument_type: InstrumentType
     exchange: ExchangeType
+    instrument_type: InstrumentType
+    upstox_instrument_key: Optional[str]

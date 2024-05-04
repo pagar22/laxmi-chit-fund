@@ -1,7 +1,11 @@
+from app.daos.base import BaseDAO
 from app.internal.firebase import db
+from app.schemas.tickers import TickerBase
 
 
-class TickerDAO:
+class TickerDAO(BaseDAO):
 
-    def __init__(self, collection_path):
-        self.collection_ref = db.collection(collection_path)
+    model = TickerBase
+
+    def __init__(self):
+        super().__init__("tickers")
