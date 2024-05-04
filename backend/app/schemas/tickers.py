@@ -5,18 +5,20 @@ from pydantic import BaseModel
 
 
 class InstrumentType(Enum):
-    EQUITY = "equity"
-    INDEX = "index"
+    EQUITY = "EQUITY"
+    INDEX = "INDEX"
 
 
 class ExchangeType(Enum):
-    NSE = "nse"
-    BSE = "bse"
+    NSE = "NSE"
+    BSE = "BSE"
 
 
 class TickerBase(BaseModel):
-    id: str
     name: str
+    ticker: str
+    exchange_token: int
     exchange: ExchangeType
     instrument_type: InstrumentType
-    upstox_instrument_key: Optional[str]
+    lot_size: Optional[int] = None
+    upstox_instrument_key: Optional[str] = None

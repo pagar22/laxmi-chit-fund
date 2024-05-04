@@ -1,6 +1,6 @@
 import json
-from abc import ABC, abstractmethod
-from typing import Optional, Type, TypeVar
+from abc import ABC
+from typing import List, Optional, Type, TypeVar
 
 from app.internal.firebase import db
 from google.cloud.firestore import Transaction
@@ -21,7 +21,7 @@ class BaseDAO(ABC):
     def _model_dump_json(self, data: T, **kwargs) -> dict:
         return json.loads(data.model_dump_json(**kwargs))
 
-    async def get(self, id: str, batch: Transaction) -> Optional[T]:
+    async def get(self, id: str, batch: Optional[Transaction] = None) -> Optional[T]:
         doc = await self.collection_reference.document(id).get(transaction=batch)
         if doc.exists:
             return self.model(**doc.to_dict())
@@ -42,6 +42,18 @@ class BaseDAO(ABC):
             await batch.set(doc, data)
         else:
             await doc.set(data)
+
+    async def batch_create(self, items: List[T]):
+        batch = db.batch()
+        count = 1
+        firestore_batch_limit = 500
+
+        for item in items:
+            await self.create(item, batch=batch)
+            count += 1
+            if count % firestore_batch_limit == 0:
+                await batch.commit()
+        await batch.commit()
 
     # def update(self, **kwargs):
     #     return self.model.update(**kwargs)
