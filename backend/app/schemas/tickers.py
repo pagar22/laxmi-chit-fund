@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel
+from app.schemas.common import TimeStamp
 
 
 class InstrumentType(Enum):
@@ -14,7 +14,7 @@ class ExchangeType(Enum):
     BSE = "BSE"
 
 
-class TickerBase(BaseModel):
+class TickerBase(TimeStamp):
     name: str
     ticker: str
     exchange_token: int
