@@ -1,13 +1,12 @@
+from app.routers import tickers
 from fastapi import FastAPI
 
 app = FastAPI()
 
 
-@app.get("/")
+@app.get("/ping")
 def ping():
     return {"data": "pong!"}
 
-
-from app.routers import tickers
 
 app.include_router(tickers.router, prefix="/tickers")
