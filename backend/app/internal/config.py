@@ -1,5 +1,6 @@
 import os
 
+from google.api_core.exceptions import PermissionDenied
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud.secretmanager import (
     AccessSecretVersionResponse,
@@ -17,7 +18,7 @@ def access_secret_manager(
         secret_manager_client = SecretManagerServiceClient()
         resp = secret_manager_client.access_secret_version(name=name)
         return resp.payload.data.decode("UTF-8")
-    except DefaultCredentialsError:
+    except (DefaultCredentialsError, PermissionDenied):
         raise PermissionError(
             "GCP user is not authenticated. To login run `gcloud auth application-default login`"
         )
