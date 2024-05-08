@@ -3,3 +3,6 @@
 # envs
 .env
 venv/
+
+# secrets
+credentials/
