@@ -1,5 +1,8 @@
 /.DS_Store
 
+# python
+__pycache__/
+
 # envs
 .env
 venv/
