@@ -23,6 +23,7 @@ class TickerBase(TimeStamp):
     exchange: ExchangeType
     instrument_type: InstrumentType
     lot_size: Optional[int] = None
+    smallcase_name: Optional[str] = None
     upstox_instrument_key: Optional[str] = None
 
 

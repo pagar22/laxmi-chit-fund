@@ -37,7 +37,7 @@ class BaseDAO(ABC):
         batch: Optional[Transaction] = None,
     ):
         doc = self.collection_reference.document(id or getattr(payload, "id", None))
-        data = self._model_dump_json(payload)
+        data = self._model_dump_json(payload, exclude_none=True)
         if isinstance(batch, Transaction):
             await batch.set(doc, data)
         else:
