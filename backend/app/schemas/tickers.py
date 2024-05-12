@@ -1,9 +1,9 @@
 from enum import Enum
-from typing import Annotated, Dict, Optional
+from typing import Dict, Optional
 
-from app.schemas.common import TimeStamp
+from app.schemas.common import MonthlyBase, TimeStamp
 from app.utils.validators import validate_date_path
-from pydantic import BaseModel, Field, StringConstraints, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class InstrumentType(Enum):
@@ -36,9 +36,7 @@ class CandleBase(BaseModel):
     open_interest: Optional[int] = None
 
 
-class MonthlyCandleBase(BaseModel):
-    month: Annotated[str, StringConstraints(pattern=r"^(0[1-9]|1[0-2])$")]
-    year: Annotated[str, StringConstraints(pattern=r"^(19\d{2}|20\d{2})$")]
+class CandleStickBase(MonthlyBase):
     daily: Dict[str, CandleBase] = Field(default_factory=dict)
     monthly: Optional[CandleBase] = None
 

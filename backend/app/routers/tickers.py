@@ -1,5 +1,5 @@
 from app.daos.tickers import TickerDAO
-from app.schemas.tickers import MonthlyCandleBase, TickerBase
+from app.schemas.tickers import CandleStickBase, TickerBase
 from fastapi import APIRouter, HTTPException, status
 
 router = APIRouter()
@@ -21,7 +21,7 @@ async def create(ticker: TickerBase):
 
 
 @router.post("/{id}/candles", status_code=status.HTTP_201_CREATED)
-async def create_candle_sticks(id: str, monthly_candle: MonthlyCandleBase):
+async def create_candle_sticks(id: str, monthly_candle: CandleStickBase):
 
     ticker = await tickerDAO.get(id)
     if not ticker:

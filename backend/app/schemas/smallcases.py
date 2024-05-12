@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Annotated, Optional
 
-from app.schemas.common import TimeStamp
+from app.schemas.common import MonthlyBase, TimeStamp
 from pydantic import BaseModel, StringConstraints
 
 
@@ -46,8 +46,6 @@ class SmallcaseBase(TimeStamp):
     contains_etf: bool
     contains_stock: bool
     constituent_count: int
-    investor_count: Optional[int]
-    subscriber_count: Optional[int]
 
     cagr: CAGRBase
     benchmark: BenchmarkBase
@@ -62,9 +60,9 @@ class SmallcaseBase(TimeStamp):
     rebalance_frequency: RebalanceFrequency
 
 
-class MonthlySmallcaseStatisticsBase(BaseModel):
-    month: Annotated[str, StringConstraints(pattern=r"^(0[1-9]|1[0-2])$")]
-    year: Annotated[str, StringConstraints(pattern=r"^(19\d{2}|20\d{2})$")]
+class SmallcaseStatisticsBase(MonthlyBase):
+    investor_count: Optional[int]
+    subscriber_count: Optional[int]
 
     monthly_cagr: float
     quarterly_cagr: float
