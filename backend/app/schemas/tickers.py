@@ -40,7 +40,7 @@ class CandleStickBase(MonthlyBase):
     daily: Dict[str, CandleBase] = Field(default_factory=dict)
     monthly: Optional[CandleBase] = None
 
-    @field_validator("daily", pre=True, allow_reuse=True)
+    @field_validator("daily")
     def validate_daily(cls, v):
         for key in v:
             validate_date_path(key)

@@ -1,9 +1,9 @@
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Optional
+from typing import Optional
 
-from app.schemas.common import MonthlyBase, TimeStamp
-from pydantic import BaseModel, StringConstraints
+from app.schemas.common import MonthlyBase
+from pydantic import BaseModel
 
 
 class RebalanceFrequency(Enum):
@@ -18,8 +18,9 @@ class Volatility(Enum):
     HIGH = "High Volatility"
 
 
-class CAGRBase(BaseModel):
-    value: float
+class GrowthBase(BaseModel):
+    cagr: float
+    returns: float
     duration: str
 
 
@@ -34,22 +35,22 @@ class MethodologyBase(BaseModel):
     details: str
 
 
-class SmallcaseBase(TimeStamp):
+class SmallcaseBase(BaseModel):
     id: str
     name: str
     slug: str
     description: str
     volatility: Volatility
-    popularity_rank: Optional[int]
-    rebalance_timeline_sheet: Optional[str]
+    popularity_rank: Optional[int] = None
+    rebalance_timeline_sheet: Optional[str] = None
 
     contains_etf: bool
     contains_stock: bool
     constituent_count: int
 
-    cagr: CAGRBase
     benchmark: BenchmarkBase
-    methodology: list[MethodologyBase]
+    growth_since_launch: GrowthBase
+    methodologies: list[MethodologyBase]
 
     launch_date: datetime
     inception_date: datetime
@@ -60,26 +61,46 @@ class SmallcaseBase(TimeStamp):
     rebalance_frequency: RebalanceFrequency
 
 
+class ReturnsBase(BaseModel):
+    monthly: float
+    quarterly: float
+    half_year: float
+    one_year: float
+    three_year: float
+    five_year: float
+
+
+class CAGRBase(BaseModel):
+    one_year: float
+    three_year: float
+    five_year: float
+
+
+class RatioBase(BaseModel):
+    dividend_yield: Optional[float] = None
+    dividend_yield_differential: Optional[float] = None
+
+    risk: Optional[float] = None
+    pe: Optional[float] = None
+    pb: Optional[float] = None
+    beta: Optional[float] = None
+    sharpe: Optional[float] = None
+
+
+class WeightageBase(BaseModel):
+    large_cap: float
+    mid_cap: float
+    small_cap: float
+    market_category: Optional[str] = None
+
+
 class SmallcaseStatisticsBase(MonthlyBase):
-    investor_count: Optional[int]
-    subscriber_count: Optional[int]
+    min_sip_amount: int
+    investor_count: Optional[int] = None
+    subscriber_count: Optional[int] = None
 
-    monthly_cagr: float
-    quarterly_cagr: float
-    one_year_cagr: Optional[float]
-    three_year_cagr: Optional[float]
-    five_year_cagr: Optional[float]
+    cagr: CAGRBase
+    returns: ReturnsBase
+    ratios: RatioBase
 
-    dividend_yield: float
-    dividend_yield_differential: float
-
-    pe: float
-    pb: float
-    risk: float
-    beta: Optional[float]
-    sharpe_ratio: Optional[float]
-
-    market_category: str
-    large_cap_percentage: float
-    mid_cap_percentage: float
-    small_cap_percentage: float
+    weightage: WeightageBase

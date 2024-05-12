@@ -1,4 +1,4 @@
-from app.routers import tickers
+from app.routers import smallcases, tickers
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -10,3 +10,4 @@ def ping():
 
 
 app.include_router(tickers.router, prefix="/tickers")
+app.include_router(smallcases.router, prefix="/smallcases")
