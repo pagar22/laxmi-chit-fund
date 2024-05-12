@@ -67,14 +67,14 @@ class ReturnsBase(BaseModel):
     quarterly: float
     half_year: float
     one_year: float
-    three_year: float
-    five_year: float
+    three_year: Optional[float] = None
+    five_year: Optional[float] = None
 
 
 class CAGRBase(BaseModel):
     one_year: float
-    three_year: float
-    five_year: float
+    three_year: Optional[float] = None
+    five_year: Optional[float] = None
 
 
 class RatioBase(BaseModel):
