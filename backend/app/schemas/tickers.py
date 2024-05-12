@@ -3,7 +3,7 @@ from typing import Annotated, Dict, Optional
 
 from app.schemas.common import TimeStamp
 from app.utils.validators import validate_date_path
-from pydantic import BaseModel, Field, StringConstraints, validator
+from pydantic import BaseModel, Field, StringConstraints, field_validator
 
 
 class InstrumentType(Enum):
@@ -42,7 +42,7 @@ class MonthlyCandleBase(BaseModel):
     daily: Dict[str, CandleBase] = Field(default_factory=dict)
     monthly: Optional[CandleBase] = None
 
-    @validator("daily", pre=True, allow_reuse=True)
+    @field_validator("daily", pre=True, allow_reuse=True)
     def validate_daily(cls, v):
         for key in v:
             validate_date_path(key)
