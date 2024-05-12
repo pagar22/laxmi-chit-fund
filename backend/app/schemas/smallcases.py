@@ -9,7 +9,7 @@ from pydantic import BaseModel
 class RebalanceFrequency(Enum):
     MONTHLY = "monthly"
     QUARTERLY = "quarterly"
-    ANNUALLY = "annually"
+    ANNUAL = "annual"
 
 
 class Volatility(Enum):
