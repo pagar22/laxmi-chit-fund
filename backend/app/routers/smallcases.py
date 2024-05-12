@@ -25,4 +25,4 @@ async def create_statistics(id: str, monthly_stats: SmallcaseStatisticsBase):
     if not smallcase:
         raise HTTPException(status_code=404, detail="Smallcase not found")
 
-    await smallcaseDAO.create_statistics(monthly_stats, id)
+    await smallcaseDAO.create_statistics(id, monthly_stats)
