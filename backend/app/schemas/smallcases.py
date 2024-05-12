@@ -61,6 +61,7 @@ class SmallcaseBase(BaseModel):
     rebalance_frequency: RebalanceFrequency
 
 
+# Statistics
 class ReturnsBase(BaseModel):
     monthly: float
     quarterly: float
