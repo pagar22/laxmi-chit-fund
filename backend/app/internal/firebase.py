@@ -1,5 +1,6 @@
 import base64
 import json
+import logging as __logging
 import os
 
 import firebase_admin
@@ -18,4 +19,5 @@ laxmi_chit_fund = firebase_admin.initialize_app(__credentials)
 
 # Services
 db = firestore_async.client()
+log = __logging.getLogger("uvicorn.error")
 bucket = storage.bucket(__storage_bucket_path)

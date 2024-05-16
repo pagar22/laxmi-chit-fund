@@ -6,6 +6,11 @@ router = APIRouter()
 smallcaseDAO = SmallcaseDAO()
 
 
+@router.get("/")
+async def list():
+    return await smallcaseDAO.stream()
+
+
 @router.get("/{id}")
 async def get(id: str):
     smallcase = await smallcaseDAO.get(id)
