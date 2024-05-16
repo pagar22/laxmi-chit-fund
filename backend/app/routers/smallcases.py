@@ -26,12 +26,14 @@ async def create(smallcase: SmallcaseBase):
 
 
 @router.post("/{id}/statistics", status_code=status.HTTP_201_CREATED)
-async def create_statistics(id: str, monthly_stats: SmallcaseStatisticsBase):
+async def create_statistics(
+    id: str, monthly_stats: SmallcaseStatisticsBase, date: str = Depends(datestr)
+):
     smallcase = await smallcaseDAO.get(id)
     if not smallcase:
         raise HTTPException(status_code=404, detail="Smallcase not found")
 
-    await smallcaseDAO.create_statistics(id, monthly_stats)
+    await smallcaseDAO.create_statistics(id, monthly_stats, date)
 
 
 @router.get("/{id}/statistics")
