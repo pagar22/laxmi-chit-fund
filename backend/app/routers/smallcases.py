@@ -1,6 +1,7 @@
 from app.daos.smallcases import SmallcaseDAO
 from app.schemas.smallcases import SmallcaseBase, SmallcaseStatisticsBase
-from fastapi import APIRouter, HTTPException, status
+from app.utils.validators import datestr
+from fastapi import APIRouter, Depends, HTTPException, status
 
 router = APIRouter()
 smallcaseDAO = SmallcaseDAO()
@@ -31,3 +32,11 @@ async def create_statistics(id: str, monthly_stats: SmallcaseStatisticsBase):
         raise HTTPException(status_code=404, detail="Smallcase not found")
 
     await smallcaseDAO.create_statistics(id, monthly_stats)
+
+
+@router.get("/{id}/statistics")
+async def get_statistics(id: str, date: str = Depends(datestr)):
+    statistics = await smallcaseDAO.get_statistics(id, date)
+    if not statistics:
+        raise HTTPException(status_code=404, detail="Statistics not found")
+    return statistics
