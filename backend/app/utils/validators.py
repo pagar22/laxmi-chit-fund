@@ -15,8 +15,9 @@ def _format_date(date: str, format: str = DATE_FORMAT) -> str:
 
 def _validate_date(date: str):
     """
-    Tests if the given date param is in the format YYYY-MM-DD. Raises ValueError if not.
-    - Returns: None.
+    Tests if the given date (str) is in the format YYYY-MM-DD. Raises ValueError if not.
+    - Parameters: date (str)
+    - Returns: None
     """
     try:
         datetime.strptime(date, DATE_FORMAT)
@@ -26,7 +27,7 @@ def _validate_date(date: str):
 
 def datestr(date: str = Query(..., description="YYYY-MM-DD")) -> str:
     """
-    FastAPI query param validator for dates in the format YYYY-MM-DD.
+    - Parameters: FastAPI query param date (str) in the format YYYY-MM-DD
     - Returns: 0-padded date string of type YYYY-MM-DD
     """
     try:
