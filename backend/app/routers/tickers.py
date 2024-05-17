@@ -9,9 +9,9 @@ tickerDAO = TickerDAO()
 @router.get("/{id}")
 async def get(id: str):
     ticker = await tickerDAO.get(id)
-    if ticker:
-        return ticker
-    raise HTTPException(status_code=404, detail="Ticker not found")
+    if not ticker:
+        raise HTTPException(status_code=404, detail="Ticker not found")
+    return ticker
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
