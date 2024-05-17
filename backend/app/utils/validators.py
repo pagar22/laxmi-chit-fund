@@ -1,18 +1,26 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from fastapi import HTTPException, Query
 
 DATE_FORMAT = "%Y-%m-%d"
 
 
-def _format_date(date: str, format: str = DATE_FORMAT) -> str:
+def get_datetime(date: str) -> date:
+    """
+    - Parameters: date (str) in the format YYYY-MM-DD
+    - Returns: date object as YYYY-MM-DD
+    """
+    return datetime.strptime(date, DATE_FORMAT).date()
+
+
+def format_date(date: str) -> str:
     """
     Tests if the given date (str) is of the format YYYY-MM-DD. Raises ValueError if not.
     - Parameters: date (str), format (str) defaulting to YYYY-MM-DD
     - Returns: 0-padded date string of type YYYY-MM-DD
     """
     try:
-        return datetime.strptime(date, DATE_FORMAT).strftime(format)
+        return datetime.strptime(date, DATE_FORMAT).strftime(DATE_FORMAT)
     except:
         raise ValueError(f"{date} is not of the expected format YYYY-MM-DD")
 
@@ -24,7 +32,7 @@ def datestr(date: str = Query(..., description="YYYY-MM-DD")) -> str:
     - Returns: 0-padded date string in the format YYYY-MM-DD
     """
     try:
-        return _format_date(date)
+        return format_date(date)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
