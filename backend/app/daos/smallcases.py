@@ -1,7 +1,7 @@
 from app.daos.base import BaseDAO
 from app.internal.firebase import log
 from app.schemas.smallcases import SmallcaseBase, SmallcaseStatisticsBase
-from app.utils.validators import get_date
+from app.utils.dates import split_date
 
 
 class SmallcaseDAO(BaseDAO):
@@ -12,7 +12,7 @@ class SmallcaseDAO(BaseDAO):
         super().__init__("smallcases")
 
     async def get_statistics(self, id: str, date: str):
-        y, m, d = get_date(date)
+        y, m, d = split_date(date)
         date = f"{y}-{m}"
         path = f"{id}/statistics/{date}"
         doc = await self.collection_reference.document(path).get()
@@ -24,7 +24,7 @@ class SmallcaseDAO(BaseDAO):
     async def create_statistics(
         self, id: str, payload: SmallcaseStatisticsBase, date: str
     ):
-        y, m, d = get_date(date)
+        y, m, d = split_date(date)
         date = f"{y}-{m}"
         path = f"{id}/statistics/{date}"
         doc = self.collection_reference.document(path)

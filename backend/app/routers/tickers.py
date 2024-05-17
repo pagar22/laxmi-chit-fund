@@ -1,6 +1,6 @@
 from app.daos.tickers import TickerDAO
 from app.schemas.tickers import CandleStickBase, TickerBase
-from app.utils.validators import datestr, get_days_between_dates
+from app.utils.dates import datestr, get_days_between_dates
 from fastapi import APIRouter, HTTPException
 
 router = APIRouter()

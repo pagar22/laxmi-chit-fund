@@ -5,26 +5,6 @@ from fastapi import HTTPException, Query
 DATE_FORMAT = "%Y-%m-%d"
 
 
-def get_datetime(date: str) -> date:
-    """
-    - Parameters: date (str) in the format YYYY-MM-DD
-    - Returns: date object as YYYY-MM-DD
-    """
-    return datetime.strptime(date, DATE_FORMAT).date()
-
-
-def format_date(date: str) -> str:
-    """
-    Tests if the given date (str) is of the format YYYY-MM-DD. Raises ValueError if not.
-    - Parameters: date (str), format (str) defaulting to YYYY-MM-DD
-    - Returns: 0-padded date string of type YYYY-MM-DD
-    """
-    try:
-        return datetime.strptime(date, DATE_FORMAT).strftime(DATE_FORMAT)
-    except:
-        raise ValueError(f"{date} is not of the expected format YYYY-MM-DD")
-
-
 def datestr(date: str = Query(..., description="YYYY-MM-DD")) -> str:
     """
     FastAPI query param validator for date strings.
@@ -37,7 +17,27 @@ def datestr(date: str = Query(..., description="YYYY-MM-DD")) -> str:
         raise HTTPException(status_code=400, detail=str(e))
 
 
-def get_date(date: str) -> tuple[str, str, str]:
+def format_date(date: str) -> str:
+    """
+    Tests if the given date (str) is in the format YYYY-MM-DD. Raises ValueError if not.
+    - Parameters: date (str), format (str) defaulting to YYYY-MM-DD
+    - Returns: 0-padded date string of type YYYY-MM-DD
+    """
+    try:
+        return datetime.strptime(date, DATE_FORMAT).strftime(DATE_FORMAT)
+    except:
+        raise ValueError(f"{date} is not of the expected format YYYY-MM-DD")
+
+
+def get_date(date: str) -> date:
+    """
+    - Parameters: date (str) in the format YYYY-MM-DD
+    - Returns: date object as YYYY-MM-DD
+    """
+    return datetime.strptime(date, DATE_FORMAT).date()
+
+
+def split_date(date: str) -> tuple[str, str, str]:
     """
     - Parameters: date (str) in the format YYYY-MM-DD
     - Returns: tuple of strings (year, month, day)

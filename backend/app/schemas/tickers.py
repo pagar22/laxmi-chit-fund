@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Dict, Optional
 
 from app.schemas.common import MonthlyBase, TimeStamp
-from app.utils.validators import format_date
+from app.utils.dates import format_date
 from pydantic import BaseModel, Field, field_validator
 
 

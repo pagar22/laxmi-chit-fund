@@ -1,7 +1,7 @@
 from app.daos.smallcases import SmallcaseDAO
 from app.schemas.smallcases import SmallcaseBase, SmallcaseStatisticsBase
-from app.utils.validators import datestr
-from fastapi import APIRouter, Depends, HTTPException, status
+from app.utils.dates import datestr
+from fastapi import APIRouter, HTTPException, status
 
 router = APIRouter()
 smallcaseDAO = SmallcaseDAO()
