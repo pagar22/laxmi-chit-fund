@@ -1,0 +1,19 @@
+version: "3.11"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laxmi-chit-fun-api
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ~/.config/gcloud:/root/.config/gcloud
+    environment:
+      PORT: 2000
+      PYTHONDONTWRITEBYTECODE: 1
+    ports:
+      - "2000:2000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 2000 --reload
+    restart: on-failure
