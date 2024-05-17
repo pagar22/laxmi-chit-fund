@@ -1,3 +1,5 @@
+from typing import Optional
+
 from app.daos.base import BaseDAO
 from app.schemas.tickers import CandleStickBase, TickerBase
 from app.utils.dates import format_date, get_date, split_date
@@ -13,11 +15,10 @@ class TickerDAO(BaseDAO):
 
     async def get_candle_doc(
         self, ticker: str, year: str, month: str
-    ) -> CandleStickBase:
+    ) -> Optional[CandleStickBase]:
         path = f"{ticker}/candles/{year}-{month}"
-        print(path)
         doc = await self.collection_reference.document(path).get()
-        return CandleStickBase(**doc.to_dict())
+        return CandleStickBase(**doc.to_dict()) if doc.exists else None
 
     async def get_candle_sticks(self, ticker: str, start_date: str, end_date: str):
         candles = {}
@@ -28,7 +29,8 @@ class TickerDAO(BaseDAO):
             date = format_date(str(start))
             y, m, d = split_date(date)
             doc = await self.get_candle_doc(ticker, y, m)
-            candles.update(doc.daily)
+            if doc:
+                candles.update(doc.daily)
             start += relativedelta(months=1)
 
         f_candles = {k: v for k, v in candles.items() if start_date <= k <= end_date}
