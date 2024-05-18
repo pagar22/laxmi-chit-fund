@@ -4,7 +4,7 @@ from fastapi import FastAPI
 app = FastAPI()
 
 
-@app.get("/ping", tags=["Internal"])
+@app.get("/ping", tags=["Health"])
 def ping():
     return {"data": "pong!"}
 

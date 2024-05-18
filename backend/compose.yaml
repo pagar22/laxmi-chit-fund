@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: laxmi-chit-fun-api
+    container_name: laxmi-chit-fund-api
     working_dir: /app
     volumes:
       - .:/app
