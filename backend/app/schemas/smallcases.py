@@ -3,7 +3,8 @@ from enum import Enum
 from typing import Optional
 
 from app.schemas.common import MonthlyBase
-from pydantic import BaseModel
+from app.utils.dates import format_date
+from pydantic import BaseModel, field_validator
 
 
 class RebalanceFrequency(Enum):
@@ -59,6 +60,24 @@ class SmallcaseBase(BaseModel):
 
     investment_strategies: list[str]
     rebalance_frequency: RebalanceFrequency
+
+
+# Constituents
+class ConstituentBase(BaseModel):
+    smallcase_name: str
+    original_weightage: float
+    kelly_weightage: Optional[float] = None
+
+
+class SmallcaseConstituentsBase(BaseModel):
+    start_date: str
+    end_date: str
+    constituents: list[ConstituentBase]
+
+    @field_validator("start_date", "end_date")
+    def validate_dates(cls, v):
+        format_date(v)
+        return v
 
 
 # Statistics

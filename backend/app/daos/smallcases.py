@@ -1,6 +1,10 @@
 from app.daos.base import BaseDAO
 from app.internal.firebase import log
-from app.schemas.smallcases import SmallcaseBase, SmallcaseStatisticsBase
+from app.schemas.smallcases import (
+    SmallcaseBase,
+    SmallcaseConstituentsBase,
+    SmallcaseStatisticsBase,
+)
 from app.utils.dates import split_date
 
 
@@ -10,6 +14,14 @@ class SmallcaseDAO(BaseDAO):
 
     def __init__(self):
         super().__init__("smallcases")
+
+    async def create_constituents(self, id: str, payload: SmallcaseConstituentsBase):
+        y, m, d = split_date(payload.start_date)
+        date = f"{y}-{m}"
+        path = f"{id}/constituents/{date}"
+        doc = self.collection_reference.document(path)
+        await doc.set(self._model_dump_json(payload))
+        log.info(f"🩳 Created constituents for {id} at {date}")
 
     async def get_statistics(self, id: str, date: str):
         y, m, d = split_date(date)

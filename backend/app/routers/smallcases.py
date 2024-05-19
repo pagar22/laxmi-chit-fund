@@ -1,7 +1,11 @@
 from app.daos.smallcases import SmallcaseDAO
-from app.schemas.smallcases import SmallcaseBase, SmallcaseStatisticsBase
+from app.schemas.smallcases import (
+    SmallcaseBase,
+    SmallcaseConstituentsBase,
+    SmallcaseStatisticsBase,
+)
 from app.utils.dates import datestr
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
 smallcaseDAO = SmallcaseDAO()
@@ -20,9 +24,18 @@ async def get(id: str):
     return smallcase
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=201)
 async def create(smallcase: SmallcaseBase):
     await smallcaseDAO.create(smallcase, smallcase.id)
+
+
+@router.post("/{id}/constituents", status_code=201)
+async def create_constituents(id: str, constituents: SmallcaseConstituentsBase):
+    smallcase = await smallcaseDAO.get(id)
+    if not smallcase:
+        raise HTTPException(status_code=404, detail="Smallcase not found")
+
+    await smallcaseDAO.create_constituents(id, constituents)
 
 
 @router.get("/{id}/statistics")
@@ -34,7 +47,7 @@ async def get_statistics(id: str, date: str):
     return statistics
 
 
-@router.post("/{id}/statistics", status_code=status.HTTP_201_CREATED)
+@router.post("/{id}/statistics", status_code=201)
 async def create_statistics(id: str, monthly_stats: SmallcaseStatisticsBase, date: str):
     date = datestr(date)
     smallcase = await smallcaseDAO.get(id)
