@@ -29,6 +29,15 @@ async def create(smallcase: SmallcaseBase):
     await smallcaseDAO.create(smallcase, smallcase.id)
 
 
+@router.get("/{id}/constituents")
+async def get_constituents(id: str, date: str):
+    date = datestr(date)
+    constituents = await smallcaseDAO.get_constituents(id, date)
+    if not constituents:
+        raise HTTPException(status_code=404, detail="Constituents not found")
+    return constituents
+
+
 @router.post("/{id}/constituents", status_code=201)
 async def create_constituents(id: str, constituents: SmallcaseConstituentsBase):
     smallcase = await smallcaseDAO.get(id)

@@ -15,6 +15,18 @@ class SmallcaseDAO(BaseDAO):
     def __init__(self):
         super().__init__("smallcases")
 
+    async def get_constituents(self, id: str, date: str):
+        ref = self.collection_reference.document(id).collection("constituents")
+        docs = (
+            await ref.where("start_date", "<=", date)
+            .where("end_date", ">=", date)
+            .get()
+        )
+        if len(docs) > 0:
+            log.info(f"🤩 Found constituents for {id} at {date}")
+            return SmallcaseConstituentsBase(**docs[0].to_dict())
+        return None
+
     async def create_constituents(self, id: str, payload: SmallcaseConstituentsBase):
         y, m, d = split_date(payload.start_date)
         date = f"{y}-{m}"
