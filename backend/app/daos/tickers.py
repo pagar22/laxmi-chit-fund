@@ -14,13 +14,15 @@ class TickerDAO(BaseDAO):
         super().__init__("tickers")
 
     async def get_candle_doc(
-        self, ticker: str, year: str, month: str
+        self, exchange_token: str, year: str, month: str
     ) -> Optional[CandleStickBase]:
-        path = f"{ticker}/candles/{year}-{month}"
+        path = f"{exchange_token}/candles/{year}-{month}"
         doc = await self.collection_reference.document(path).get()
         return CandleStickBase(**doc.to_dict()) if doc.exists else None
 
-    async def get_candle_sticks(self, ticker: str, start_date: str, end_date: str):
+    async def get_candle_sticks(
+        self, exchange_token: str, start_date: str, end_date: str
+    ):
         candles = {}
         start = get_date(start_date)
         end = get_date(end_date)
@@ -28,7 +30,7 @@ class TickerDAO(BaseDAO):
         while (start.year, start.month) <= (end.year, end.month):
             date = format_date(str(start))
             y, m, d = split_date(date)
-            doc = await self.get_candle_doc(ticker, y, m)
+            doc = await self.get_candle_doc(exchange_token, y, m)
             if doc:
                 candles.update(doc.daily)
             start += relativedelta(months=1)
@@ -37,10 +39,10 @@ class TickerDAO(BaseDAO):
         return {k: f_candles[k] for k in sorted(f_candles)}
 
     async def create_candle_sticks(
-        self, ticker: str, payload: CandleStickBase, date: str
+        self, exchange_token: str, payload: CandleStickBase, date: str
     ):
         y, m, d = split_date(date)
         payload.year, payload.month = y, m
-        path = f"{ticker}/candles/{y}-{m}"
+        path = f"{exchange_token}/candles/{y}-{m}"
         doc = self.collection_reference.document(path)
         await doc.set(self._model_dump_json(payload, exclude_none=True))
