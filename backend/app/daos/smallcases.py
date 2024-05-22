@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.daos.base import BaseDAO
 from app.internal.firebase import log
 from app.schemas.smallcases import (
@@ -5,7 +7,7 @@ from app.schemas.smallcases import (
     SmallcaseConstituentsBase,
     SmallcaseStatisticsBase,
 )
-from app.utils.dates import split_date
+from app.utils.dates import get_date, split_date
 
 
 class SmallcaseDAO(BaseDAO):
@@ -17,14 +19,20 @@ class SmallcaseDAO(BaseDAO):
 
     async def get_constituents(self, id: str, date: str):
         ref = self.collection_reference.document(id).collection("constituents")
-        docs = (
-            await ref.where("start_date", "<=", date)
-            .where("end_date", ">=", date)
-            .get()
-        )
-        if len(docs) > 0:
+        query = ref.where("start_date", "<=", date).where("end_date", ">=", date)
+        docs = await query.get()
+        if docs:
             log.info(f"🤩 Found constituents for {id} at {date}")
             return SmallcaseConstituentsBase(**docs[0].to_dict())
+
+        now = datetime.now().date()
+        is_future_date = get_date(date) > now
+        if is_future_date:
+            query = ref.order_by("start_date", direction="DESCENDING").limit(1)
+            docs = await query.get()
+            if docs:
+                log.info(f"🤷‍♀️ Returning latest constituents for {id} at {date}")
+                return SmallcaseConstituentsBase(**docs[0].to_dict())
         return None
 
     async def create_constituents(self, id: str, payload: SmallcaseConstituentsBase):
