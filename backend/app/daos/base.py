@@ -33,7 +33,7 @@ class BaseDAO(ABC):
         log.info(f"🌊 Streaming docs from {self.collection_path}")
         return [
             self.model(**doc.to_dict())
-            for doc in await self.collection_reference.stream()
+            async for doc in self.collection_reference.stream()
         ]
 
     async def create(
