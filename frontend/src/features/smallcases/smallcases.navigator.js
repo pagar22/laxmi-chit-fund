@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { SmallcaseListScreen } from "features/smallcases/components/smallcase-list.screen";
+import { SmallcaseListScreen } from "features/smallcases/screens/smallcase-list.screen";
 
 const Stack = createNativeStackNavigator();
 

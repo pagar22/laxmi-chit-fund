@@ -6,20 +6,24 @@ import {
 import { Dimensions, Platform } from "react-native";
 
 export const ScreenFrame = ({ children }) => {
-  const { height } = Dimensions.get("screen");
   const isWeb = Platform.OS === "web";
+  const { height } = Dimensions.get("screen");
 
   return (
-    <SafeAreaView flex={1} pt={isWeb ? 0 : 40} bg={"$warmGray800"}>
+    <VStack
+      flex={1}
+      maxHeight={height}
+      pt={isWeb ? 10 : 40}
+      bg={"$trueGray900"}
+      KeyboardAvoidingView={false}
+    >
       <KeyboardAvoidingView
         flex={1}
         enabled={false}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <VStack flex={1} maxHeight={height} KeyboardAvoidingView={false}>
-          {children}
-        </VStack>
+        {children}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </VStack>
   );
 };

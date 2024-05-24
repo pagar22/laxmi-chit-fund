@@ -9,7 +9,7 @@ export const AppNavigator = () => {
   //   const { initialised } = useContext(AxiosContext);
   return (
     true && (
-      <VStack flex={1} bg={"$warmGray800"}>
+      <VStack flex={1} bg={"$trueGray900"}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name={"Smallcases"} component={SmallcasesNavigator} />
         </Stack.Navigator>
