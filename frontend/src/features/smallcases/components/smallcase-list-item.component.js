@@ -16,9 +16,7 @@ export const SmallcaseListItem = ({ smallcase }) => {
           w={48}
           rounded={10}
           alt={"smallcase"}
-          source={{
-            uri: "https://assets.smallcase.com/images/smallcases/160/SCNM_0025.png",
-          }}
+          source={{ uri: smallcase.pfp_url }}
         />
         <Text size={"md"} bold>
           {smallcase.name}

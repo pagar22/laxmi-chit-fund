@@ -42,6 +42,7 @@ class SmallcaseBase(BaseModel):
     slug: str
     description: str
     volatility: Volatility
+    pfp_url: Optional[str] = None
     popularity_rank: Optional[int] = None
     rebalance_timeline_sheet: Optional[str] = None
 
