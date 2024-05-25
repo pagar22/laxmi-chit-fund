@@ -1,9 +1,5 @@
-import {
-  KeyboardAvoidingView,
-  SafeAreaView,
-  VStack,
-} from "@gluestack-ui/themed";
 import { Dimensions, Platform } from "react-native";
+import { KeyboardAvoidingView, ScrollView, VStack } from "@gluestack-ui/themed";
 
 export const ScreenFrame = ({ children }) => {
   const isWeb = Platform.OS === "web";
@@ -22,7 +18,7 @@ export const ScreenFrame = ({ children }) => {
         enabled={false}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        {children}
+        <ScrollView showsVerticalScrollIndicator={false}>{children}</ScrollView>
       </KeyboardAvoidingView>
     </VStack>
   );

@@ -4,6 +4,7 @@ export const routes = {
       initialRouteName: "SmallcaseList",
       screens: {
         SmallcaseList: "smallcases",
+        SmallcaseDetail: "smallcases/:id",
       },
     },
   },

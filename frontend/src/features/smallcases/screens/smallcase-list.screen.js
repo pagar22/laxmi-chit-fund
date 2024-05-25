@@ -4,7 +4,7 @@ import { ScreenFrame } from "theme/screen-frame.component";
 import { useSmallcases } from "features/smallcases/hooks/useSmallcases";
 import { SmallcaseListItem } from "features/smallcases/components/smallcase-list-item.component";
 
-export const SmallcaseListScreen = () => {
+export const SmallcaseListScreen = ({ navigation }) => {
   const smallcases = useSmallcases();
 
   return (
@@ -21,10 +21,15 @@ export const SmallcaseListScreen = () => {
         )}
         <FlatList
           py={12}
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1 }}
           data={smallcases.data}
           renderItem={({ item }) => (
-            <SmallcaseListItem key={item.id} smallcase={item} />
+            <SmallcaseListItem
+              key={item.id}
+              smallcase={item}
+              navigation={navigation}
+            />
           )}
         />
       </VStack>
