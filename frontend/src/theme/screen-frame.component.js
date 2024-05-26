@@ -9,8 +9,8 @@ export const ScreenFrame = ({ children }) => {
     <VStack
       flex={1}
       maxHeight={height}
-      pt={isWeb ? 10 : 40}
       bg={"$trueGray900"}
+      pt={isWeb ? 10 : 40}
       KeyboardAvoidingView={false}
     >
       <KeyboardAvoidingView
