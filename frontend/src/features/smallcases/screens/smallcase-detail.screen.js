@@ -14,6 +14,7 @@ import { NavigationPanel } from "theme/navigation-panel.component";
 import { camelToTitle, formatDate, rounded } from "services/helpers";
 import { useSmallcase } from "features/smallcases/hooks/useSmallcase";
 import { useSmallcaseConstituents } from "features/smallcases/hooks/useSmallcaseConstituents";
+import { SmallcasePerformanceChart } from "features/smallcases/components/smallcase-performance-chart.component";
 
 export const SmallcaseDetailScreen = ({ navigation, route }) => {
   const { id } = route.params;
@@ -103,6 +104,7 @@ export const SmallcaseDetailScreen = ({ navigation, route }) => {
             </>
           )}
         />
+        <SmallcasePerformanceChart />
       </VStack>
     </ScreenFrame>
   );
