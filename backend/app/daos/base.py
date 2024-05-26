@@ -3,7 +3,7 @@ from abc import ABC
 from typing import List, Optional, Type, TypeVar
 
 from app.internal.firebase import db, log
-from google.cloud.firestore import Transaction
+from google.cloud.firestore import CollectionReference, DocumentReference, Transaction
 from pydantic import BaseModel
 
 T = TypeVar("T", bound=BaseModel)
@@ -21,6 +21,13 @@ class BaseDAO(ABC):
 
     def _model_dump_json(self, data: T, **kwargs) -> dict:
         return json.loads(data.model_dump_json(**kwargs))
+
+    async def _get_first_doc_by_id(self, path: str = "") -> Optional[DocumentReference]:
+        collection = db.collection(self.collection_path + path)
+        docs = await collection.order_by("__name__").limit(1).get()
+        if docs:
+            return docs[0]
+        return None
 
     async def get(self, id: str, batch: Optional[Transaction] = None) -> Optional[T]:
         doc = await self.collection_reference.document(id).get(transaction=batch)

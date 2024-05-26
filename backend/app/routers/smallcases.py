@@ -1,10 +1,12 @@
 from app.daos.smallcases import SmallcaseDAO
 from app.schemas.smallcases import (
+    IndexBase,
     SmallcaseBase,
     SmallcaseConstituentsBase,
+    SmallcaseIndexesBase,
     SmallcaseStatisticsBase,
 )
-from app.utils.dates import datestr
+from app.utils.dates import datestr, get_days_between_dates
 from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
@@ -45,6 +47,30 @@ async def create_constituents(id: str, constituents: SmallcaseConstituentsBase):
         raise HTTPException(status_code=404, detail="Smallcase not found")
 
     await smallcaseDAO.create_constituents(id, constituents)
+
+
+@router.get("/{id}/indexes", response_model=dict[str, IndexBase])
+async def get_indexes(id: str, start_date: str, end_date: str):
+    start_date = datestr(start_date)
+    end_date = datestr(end_date)
+    days = get_days_between_dates(start_date, end_date)
+    if days <= 0:
+        raise HTTPException(status_code=400, detail="Invalid date range")
+
+    indexes = await smallcaseDAO.get_indexes(id, start_date, end_date)
+    if not indexes:
+        raise HTTPException(status_code=404, detail="Indexes not found")
+    return indexes
+
+
+@router.post("/{id}/indexes", status_code=201)
+async def create_indexes(id: str, indexes: SmallcaseIndexesBase, date: str):
+    date = datestr(date)
+    smallcase = await smallcaseDAO.get(id)
+    if not smallcase:
+        raise HTTPException(status_code=404, detail="Smallcase not found")
+
+    await smallcaseDAO.create_indexes(id, indexes, date)
 
 
 @router.get("/{id}/statistics")

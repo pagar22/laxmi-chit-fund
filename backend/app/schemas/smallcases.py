@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Dict, Optional
 
 from app.schemas.common import MonthlyBase
 from app.utils.dates import format_date
@@ -81,6 +81,31 @@ class SmallcaseConstituentsBase(BaseModel):
     @field_validator("start_date", "end_date")
     def validate_dates(cls, v):
         format_date(v)
+        return v
+
+
+# Indexes
+class IndexBase(BaseModel):
+    smallcase: float
+    benchmark: float
+    kelly: Optional[float] = None
+    rebalance_occured: Optional[bool] = False
+
+
+class SmallcaseIndexesBase(BaseModel):
+    start_date: str
+    end_date: str
+    indexes: Dict[str, IndexBase]
+
+    @field_validator("start_date", "end_date")
+    def validate_dates(cls, v):
+        format_date(v)
+        return v
+
+    @field_validator("indexes")
+    def validate_indexes(cls, v):
+        for key in v:
+            format_date(key)
         return v
 
 
