@@ -89,7 +89,6 @@ class IndexBase(BaseModel):
     smallcase: float
     benchmark: float
     kelly: Optional[float] = None
-    rebalance_occured: Optional[bool] = False
 
 
 class SmallcaseIndexesBase(BaseModel):

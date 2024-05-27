@@ -63,10 +63,10 @@ class SmallcaseDAO(BaseDAO):
             path = f"{id}/indexes/{y}-{m}"
             doc = await self.collection_reference.document(path).get()
             if doc.exists:
-                log.info(f"🤩 Found indexes for {id} at {date}")
                 indexes.update(SmallcaseIndexesBase(**doc.to_dict()).indexes)
             start += relativedelta(months=1)
 
+        log.info(f"🤩 Found {len(indexes)} indexes for {id}")
         f_indexes = {k: v for k, v in indexes.items() if start_date <= k <= end_date}
         return {k: f_indexes[k] for k in sorted(f_indexes)}
 

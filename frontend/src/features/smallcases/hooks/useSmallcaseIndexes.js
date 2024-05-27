@@ -9,7 +9,7 @@ export const useSmallcaseIndexes = (id) => {
   return useQuery(
     [`smallcase-${id}-indexes`],
     () => {
-      const start_date = formatDate("2018-01-01"); // inception
+      const start_date = formatDate("2016-01-01"); // inception
       const end_date = formatDate(); // today
       return client
         .get(`/smallcases/${id}/indexes?start_date=${start_date}`, {
@@ -18,6 +18,7 @@ export const useSmallcaseIndexes = (id) => {
         .then((resp) => resp.data);
     },
     {
+      enabled: !!id,
       staleTime: 1000 * 60 * 5,
       refetchInterval: 1000 * 60,
       refetchOnWindowFocus: false,

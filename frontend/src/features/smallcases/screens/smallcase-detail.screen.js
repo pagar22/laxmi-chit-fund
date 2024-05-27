@@ -104,7 +104,7 @@ export const SmallcaseDetailScreen = ({ navigation, route }) => {
             </>
           )}
         />
-        <SmallcasePerformanceChart />
+        <SmallcasePerformanceChart smallcase={smallcase.data} />
       </VStack>
     </ScreenFrame>
   );

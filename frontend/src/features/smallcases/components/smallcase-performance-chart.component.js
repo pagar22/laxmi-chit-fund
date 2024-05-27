@@ -11,21 +11,20 @@ import {
 } from "victory";
 import { useSmallcaseIndexes } from "features/smallcases/hooks/useSmallcaseIndexes";
 
-export const SmallcasePerformanceChart = ({}) => {
+export const SmallcasePerformanceChart = ({ smallcase }) => {
   const [data, setData] = useState([]);
-  const indexes = useSmallcaseIndexes("SCAW_0001");
+  const indexes = useSmallcaseIndexes(smallcase?.id);
 
   useEffect(() => {
     if (indexes.isSuccess) {
-      const dataDict = indexes.data;
-      const temp = Object.keys(dataDict).map((day) => ({
+      const indexesData = indexes.data;
+      const values = Object.keys(indexesData).map((day) => ({
         day,
-        smallcase: dataDict[day].smallcase,
-        benchmark: dataDict[day].benchmark,
-        kelly: dataDict[day].kelly,
+        smallcase: indexesData[day].smallcase,
+        benchmark: indexesData[day].benchmark,
+        kelly: indexesData[day].kelly,
       }));
-      console.log(temp);
-      setData(temp);
+      setData(values);
     }
   }, [indexes.isSuccess]);
 
