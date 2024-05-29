@@ -9,8 +9,9 @@ export const useSmallcaseIndexes = (id) => {
   return useQuery(
     [`smallcase-${id}-indexes`],
     () => {
-      const start_date = formatDate("2020-01-01"); // inception
-      const end_date = formatDate(); // today
+      const now = new Date();
+      const end_date = formatDate(now); // today
+      const start_date = formatDate(now.setFullYear(now.getFullYear() - 5)); // 5 years ago
       return client
         .get(`/smallcases/${id}/indexes?start_date=${start_date}`, {
           params: { start_date, end_date },

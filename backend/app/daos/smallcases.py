@@ -29,7 +29,9 @@ class SmallcaseDAO(BaseDAO):
 
     async def get_constituents(self, id: str, date: str):
         ref = self.collection_reference.document(id).collection("constituents")
-        query = ref.where("start_date", "<=", date).where("end_date", ">=", date)
+        query = (
+            ref.where("start_date", "<=", date).where("end_date", ">=", date).limit(1)
+        )
         docs = await query.get()
         if docs:
             log.info(f"🤩 Found constituents for {id} at {date}")

@@ -42,7 +42,7 @@ export const SmallcasePerformanceChart = ({ smallcase }) => {
   return (
     <VStack>
       <Text size={"md"} bold>
-        Performance
+        5Y Performance
       </Text>
       <VictoryChart
         containerComponent={

@@ -4,7 +4,9 @@ import { AxiosContext } from "services/axios.context";
 
 export const useSmallcase = (id) => {
   const { client } = useContext(AxiosContext);
-  return useQuery([`smallcase-${id}`], () =>
-    client.get(`/smallcases/${id}`).then((resp) => resp.data)
+  return useQuery(
+    [`smallcase-${id}`],
+    () => client.get(`/smallcases/${id}`).then((resp) => resp.data),
+    { refetchInterval: 1000 * 60, staleTime: 1000 * 60 * 5 }
   );
 };

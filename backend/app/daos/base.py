@@ -14,6 +14,7 @@ class BaseDAO(ABC):
     model: Type[T] = None
 
     def __init__(self, collection_path: str):
+        self.db = db
         self.collection_path = collection_path
         self.collection_reference = db.collection(collection_path)
         if not self.model or not issubclass(self.model, BaseModel):
