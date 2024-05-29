@@ -3,7 +3,8 @@ from abc import ABC
 from typing import List, Optional, Type, TypeVar
 
 from app.internal.firebase import db, log
-from google.cloud.firestore import CollectionReference, DocumentReference, Transaction
+from app.utils.dates import split_date
+from google.cloud.firestore import DocumentReference, Transaction
 from pydantic import BaseModel
 
 T = TypeVar("T", bound=BaseModel)
@@ -22,6 +23,14 @@ class BaseDAO(ABC):
 
     def _model_dump_json(self, data: T, **kwargs) -> dict:
         return json.loads(data.model_dump_json(**kwargs))
+
+    async def _create_nested_monthly_doc(
+        self, doc_id, nested_collection_id, date: str, payload: dict
+    ):
+        y, m, d = split_date(date)
+        path = f"{doc_id}/{nested_collection_id}/{f'{y}-{m}'}"
+        await self.collection_reference.document(path).set(payload)
+        log.info(f"👩‍🍳 Created {nested_collection_id} for {doc_id} at {date}")
 
     async def _get_first_doc_by_id(self, path: str = "") -> Optional[DocumentReference]:
         collection = db.collection(self.collection_path + path)
@@ -56,7 +65,7 @@ class BaseDAO(ABC):
             await batch.set(doc, data)
         else:
             await doc.set(data)
-        log.info(f"🏋️ Created doc {doc.id} in {self.collection_path}")
+        log.info(f"👩‍🍳 Created doc {doc.id} in {self.collection_path}")
 
     async def batch_create(self, items: List[T]):
         batch = db.batch()

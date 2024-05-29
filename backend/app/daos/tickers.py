@@ -41,8 +41,5 @@ class TickerDAO(BaseDAO):
     async def create_candle_sticks(
         self, exchange_token: str, payload: CandleStickBase, date: str
     ):
-        y, m, d = split_date(date)
-        payload.year, payload.month = y, m
-        path = f"{exchange_token}/candles/{y}-{m}"
-        doc = self.collection_reference.document(path)
-        await doc.set(self._model_dump_json(payload, exclude_none=True))
+        data = self._model_dump_json(payload, exclude_none=True)
+        await self._create_nested_monthly_doc(exchange_token, "candles", date, data)
