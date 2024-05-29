@@ -12,9 +12,9 @@ export const useSmallcaseConstituents = (id, date) => {
         .then((resp) => resp.data);
     },
     {
-      staleTime: 1000 * 60 * 5,
-      refetchInterval: 1000 * 60,
+      staleTime: Infinity,
       refetchOnWindowFocus: false,
+      refetchInterval: 1000 * 60 * 5,
     }
   );
 };

@@ -25,7 +25,6 @@ class SmallcaseDAO(BaseDAO):
         y, m, d = split_date(date)
         date = f"{y}-{m}"
         path = f"{smallcase_id}/{collection_id}/{date}"
-        print(path)
         await self.collection_reference.document(path).set(data)
 
     async def get_constituents(self, id: str, date: str):
