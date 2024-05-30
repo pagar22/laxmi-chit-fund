@@ -23,14 +23,17 @@ async def create(ticker: TickerBase):
 
 @router.get("/{id}/candles", response_model=dict[str, CandleBase])
 async def get_candle_sticks_range(id: str, start_date: str, end_date: str):
+    MAX_YEARS = 1
+    BUFFER_DAYS = 1
     start_date = datestr(start_date)
     end_date = datestr(end_date)
     days = get_days_between_dates(start_date, end_date)
     if days <= 0:
         raise HTTPException(status_code=400, detail="Invalid date range")
-    elif days > 365:
+    elif days > 365 * MAX_YEARS + BUFFER_DAYS:
         raise HTTPException(
-            status_code=400, detail="Cannot fetch candles for more than 1 year"
+            status_code=400,
+            detail=f"Cannot fetch candles for more than {MAX_YEARS} year(s)",
         )
 
     candles = await tickerDAO.get_candle_sticks(id, start_date, end_date)
@@ -52,6 +55,7 @@ async def get_candle_sticks_monthly(id: str, date: str):
 @router.post("/{id}/candles", status_code=201)
 async def create_candle_sticks(id: str, candle_sticks: CandleStickBase, date: str):
     date = datestr(date)
+    y, m, d = split_date(date)
     ticker = await tickerDAO.get(id)
     if not ticker:
         raise HTTPException(status_code=404, detail="Ticker not found")
