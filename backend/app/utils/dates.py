@@ -46,7 +46,28 @@ def split_date(date: str) -> tuple[str, str, str]:
     return y, m, d
 
 
-def get_days_between_dates(date_from: str, date_to: str) -> int:
+def validate_date_range(start_date: str, end_date: str, max_days: int) -> None:
+    """
+    FastAPI validator to validate the date range between start_date and end_date.
+    Raises HTTP 400 for invalid date ranges.
+
+    Parameters:
+    - start_date (str), end_date (str) in the format YYYY-MM-DD
+    - max_years (int): Maximum number of years allowed in the date range
+    - buffer_days (int): Number of days to add to max_years to account for leap years or other
+    - Returns: None
+    """
+    days = _get_days_between_dates(start_date, end_date)
+    if days <= 0:
+        raise HTTPException(status_code=400, detail="Invalid date range")
+    elif days > max_days:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot fetch data for more than {365 // days} year(s)",
+        )
+
+
+def _get_days_between_dates(date_from: str, date_to: str) -> int:
     """
     - Parameters: date_from (str), date_to (str) in the format YYYY-MM-DD
     - Returns: Number of days between the two dates

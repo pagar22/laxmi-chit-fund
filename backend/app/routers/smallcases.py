@@ -6,7 +6,7 @@ from app.schemas.smallcases import (
     SmallcaseIndexesBase,
     SmallcaseStatisticsBase,
 )
-from app.utils.dates import datestr, get_days_between_dates
+from app.utils.dates import datestr, validate_date_range
 from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
@@ -51,18 +51,10 @@ async def create_constituents(id: str, constituents: SmallcaseConstituentsBase):
 
 @router.get("/{id}/indexes", response_model=dict[str, IndexBase])
 async def get_indexes(id: str, start_date: str, end_date: str):
-    BUFFER_DAYS = 2
-    MAX_INDEX_YEARS = 5
-    start_date = datestr(start_date)
     end_date = datestr(end_date)
-    days = get_days_between_dates(start_date, end_date)
-    if days <= 0:
-        raise HTTPException(status_code=400, detail="Invalid date range")
-    elif days > MAX_INDEX_YEARS * 365 + BUFFER_DAYS:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Cannot fetch indexes for more than {MAX_INDEX_YEARS} year(s)",
-        )
+    start_date = datestr(start_date)
+    MAX_DAYS = 365 * 5 + 2
+    validate_date_range(start_date, end_date, MAX_DAYS)
 
     indexes = await smallcaseDAO.get_indexes(id, start_date, end_date)
     if not indexes:

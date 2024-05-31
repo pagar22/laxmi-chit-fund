@@ -1,6 +1,6 @@
 from app.daos.tickers import TickerDAO
 from app.schemas.tickers import CandleBase, CandleStickBase, TickerBase
-from app.utils.dates import datestr, get_days_between_dates, split_date
+from app.utils.dates import datestr, split_date, validate_date_range
 from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
@@ -23,18 +23,9 @@ async def create(ticker: TickerBase):
 
 @router.get("/{id}/candles", response_model=dict[str, CandleBase])
 async def get_candle_sticks_range(id: str, start_date: str, end_date: str):
-    MAX_YEARS = 1
-    BUFFER_DAYS = 1
-    start_date = datestr(start_date)
     end_date = datestr(end_date)
-    days = get_days_between_dates(start_date, end_date)
-    if days <= 0:
-        raise HTTPException(status_code=400, detail="Invalid date range")
-    elif days > 365 * MAX_YEARS + BUFFER_DAYS:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Cannot fetch candles for more than {MAX_YEARS} year(s)",
-        )
+    start_date = datestr(start_date)
+    validate_date_range(start_date, end_date, max_days=366)
 
     candles = await tickerDAO.get_candle_sticks(id, start_date, end_date)
     if not candles:
