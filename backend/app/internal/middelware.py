@@ -28,34 +28,24 @@ def rate_limiting(app: FastAPI):
     app.add_middleware(SlowAPIASGIMiddleware)
 
 
-def set_protected_routes(app: FastAPI):
-    if not hasattr(app.state, "protected_routes"):
-        protected_routes = {}
-        protected_methods = ["POST", "PATCH", "DELETE"]
-        for route in app.routes:
-            if any(method in protected_methods for method in route.methods):
-                protected_routes[route.path] = route.methods
-        setattr(app.state, "protected_routes", protected_routes)
-
-
 def app_middleware(app: FastAPI):
     cors(app)
     rate_limiting(app)
-    set_protected_routes(app)
 
     @app.middleware("http")
     async def validate_cud_api_key(request: Request, call_next):
+        routes = [route.path for route in app.routes]
+        protected_methods = ["POST", "PATCH", "DELETE"]
         method, route = request.method, request.url.path
-        protected_routes = getattr(app.state, "protected_routes")
 
-        if route in protected_routes and method in protected_routes[route]:
+        if method in protected_methods and route in routes:
             log.info(f"🔑 CUD API Key needed for {method} to {route}")
             cud_api_key = access_secret_manager("CUD_API_KEY", "latest")
             request_api_key = request.headers.get("X-CUD-Api-Key")
             if not request_api_key:
-                return JSONResponse(status_code=401, content="Unauthenticated")
-            if request_api_key != cud_api_key:
                 return JSONResponse(
-                    status_code=403, content="Unauthorized Restricted Method"
+                    status_code=401, content="Unauthenticated, restricted method"
                 )
+            if request_api_key != cud_api_key:
+                return JSONResponse(status_code=403, content="Unauthorised, bad key")
         return await call_next(request)
