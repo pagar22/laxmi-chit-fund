@@ -5,14 +5,14 @@ import requests
 from flask import Request
 from utils.config import LAXMI_URL, LOG, UPSTOX_URL
 from utils.dates import format_date, get_last_day_of_month
-from utils.schemas import CandlestickRequest, RequestError
+from utils.schemas import CandlesticksRequest, RequestError
 
 
 @functions_framework.http
 def main(request: Request):
     LOG.info("😶‍🌫️ Candlesticks CF invoked...")
     try:
-        payload = CandlestickRequest(**request.get_json())
+        payload = CandlesticksRequest(**request.get_json())
     except Exception as e:
         LOG.error(f"Bad request payload, {e}")
         return (f"bad_request, {e}", 400)

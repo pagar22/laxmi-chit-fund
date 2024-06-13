@@ -2,7 +2,7 @@ from pydantic import BaseModel, field_validator
 from utils.dates import validate_date
 
 
-class CandlestickRequest(BaseModel):
+class CandlesticksRequest(BaseModel):
     date: str
     smallcase_name: str
 

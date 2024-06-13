@@ -34,11 +34,12 @@ def app_middleware(app: FastAPI):
 
     @app.middleware("http")
     async def validate_cud_api_key(request: Request, call_next):
-        routes = [route.path for route in app.routes]
-        protected_methods = ["POST", "PATCH", "DELETE"]
+        protected_methods = ["POST", "PATCH", "PUT", "DELETE"]
         method, route = request.method, request.url.path
-
-        if method in protected_methods and route in routes:
+        if method in protected_methods:
+            # for protected_route in app.routes:
+            #     match, scope = protected_route.matches(request)
+            #     if match == Match.FULL: # from starlette.routing import Match
             log.info(f"🔑 CUD API Key needed for {method} to {route}")
             cud_api_key = access_secret_manager("CUD_API_KEY", "latest")
             request_api_key = request.headers.get("X-CUD-Api-Key")
