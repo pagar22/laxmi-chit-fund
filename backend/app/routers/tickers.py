@@ -15,6 +15,15 @@ async def get(id: str):
     return ticker
 
 
+@router.get("/")
+async def get_by_smallcase_name(smallcase_name: str):
+    print(smallcase_name)
+    ticker = await tickerDAO.get_by_smallcase_name(smallcase_name)
+    if not ticker:
+        raise HTTPException(status_code=404, detail="Ticker not found")
+    return ticker
+
+
 @router.post("/", status_code=201)
 async def create(ticker: TickerBase):
     id = str(ticker.exchange_token)
@@ -46,7 +55,6 @@ async def get_candle_sticks_monthly(id: str, date: str):
 @router.post("/{id}/candles", status_code=201)
 async def create_candle_sticks(id: str, candle_sticks: CandleStickBase, date: str):
     date = datestr(date)
-    y, m, d = split_date(date)
     ticker = await tickerDAO.get(id)
     if not ticker:
         raise HTTPException(status_code=404, detail="Ticker not found")

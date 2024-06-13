@@ -13,6 +13,12 @@ class TickerDAO(BaseDAO):
     def __init__(self):
         super().__init__("tickers")
 
+    async def get_by_smallcase_name(self, smallcase_name: str) -> Optional[TickerBase]:
+        query = self.collection_reference.where("smallcase_name", "==", smallcase_name)
+        docs = await query.get()
+        if len(docs):
+            return self.model(**docs[0].to_dict())
+
     async def get_candle_doc(
         self, exchange_token: str, year: str, month: str
     ) -> Optional[CandleStickBase]:

@@ -24,6 +24,11 @@ class BaseDAO(ABC):
     def _model_dump_json(self, data: T, **kwargs) -> dict:
         return json.loads(data.model_dump_json(**kwargs))
 
+    async def _get_nested_monthly_doc(self, doc_id, nested_collection_id, date: str):
+        y, m, d = split_date(date)
+        path = f"{doc_id}/{nested_collection_id}/{f'{y}-{m}'}"
+        return await self.collection_reference.document(path).get()
+
     async def _create_nested_monthly_doc(
         self, doc_id, nested_collection_id, date: str, payload: dict
     ):
