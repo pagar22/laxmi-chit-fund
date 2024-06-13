@@ -5,7 +5,7 @@ import functions_framework
 import pandas as pd
 import requests
 from flask import Request
-from utils.config import BUCKET, LAXMI_URL, LOG
+from utils.config import LAXMI_API_URL, LAXMI_CUD_API_KEY, bucket, log
 
 
 @functions_framework.http
@@ -15,7 +15,7 @@ def main(request: Request):
     smallcase_name = data.get("smallcase_name")
 
     if not exchange_token and not smallcase_name:
-        LOG.error("Bad Request", exchange_token, smallcase_name)
+        log.error("Bad Request", exchange_token, smallcase_name)
         return (f"bad_request, smallcase_name or exchange_token required", 400)
     try:
         tickers = get_tickers_csv()
@@ -26,7 +26,7 @@ def main(request: Request):
             post_ticker(ticker)
 
         elif exchange_token:
-            LOG.warn(f"💛 POST using exchange_token is discouraged!")
+            log.warn(f"💛 POST using exchange_token is discouraged!")
             ticker_row = tickers.query(f"exchange_token == {exchange_token}")
             ticker = parse_ticker_from_row(ticker_row)
             post_ticker(ticker)
@@ -43,7 +43,7 @@ class RequestError(Exception):
 
 
 def get_tickers_csv() -> pd.DataFrame:
-    blob = BUCKET.blob("tickers/NSE.csv")
+    blob = bucket.blob("tickers/NSE.csv")
     csv = StringIO(blob.download_as_bytes().decode("utf-8"))
     return pd.read_csv(csv)
 
@@ -57,7 +57,7 @@ def get_row_from_smallcase_name(
     tickers["name_lower"] = tickers["name"].str.lower()
     tickers["similarity"] = tickers["name_lower"].apply(get_similarity)
     top_match = tickers.sort_values("similarity", ascending=False).head(1)
-    LOG.info(f"Choosing Top Match: {top_match}")
+    log.info(f"Choosing Top Match: {top_match}")
     return top_match
 
 
@@ -74,12 +74,13 @@ def parse_ticker_from_row(ticker_row: pd.Series) -> dict:
     ]
     df: pd.Series = ticker_row.rename(columns=rename_cols)
     tickers = df[parse_cols].to_dict(orient="records")
-    LOG.info(f"Parsed Tickers from CSV: {tickers}")
+    log.info(f"Parsed Tickers from CSV: {tickers}")
     return tickers[0]
 
 
 def post_ticker(ticker: dict):
-    resp = requests.post(f"{LAXMI_URL}/tickers", json=ticker)
+    headers = {"X-CUD-Api-Key": LAXMI_CUD_API_KEY}
+    resp = requests.post(f"{LAXMI_API_URL}/tickers", json=ticker, headers=headers)
     if resp.status_code not in [200, 201]:
-        LOG.error(f"Failed to create ticker: {resp.json()}")
+        log.error(f"Failed to create ticker: {resp.json()}")
         raise RequestError(f"ticker_not_posted", resp.status_code)

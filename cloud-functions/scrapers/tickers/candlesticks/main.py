@@ -3,18 +3,18 @@ from datetime import datetime
 import functions_framework
 import requests
 from flask import Request
-from utils.config import LAXMI_URL, LOG, UPSTOX_URL
+from utils.config import LAXMI_API_URL, LAXMI_CUD_API_KEY, UPSTOX_URL, log
 from utils.dates import format_date, get_last_day_of_month
 from utils.schemas import CandlesticksRequest, RequestError
 
 
 @functions_framework.http
 def main(request: Request):
-    LOG.info("😶‍🌫️ Candlesticks CF invoked...")
+    log.info("😶‍🌫️ Candlesticks CF invoked...")
     try:
         payload = CandlesticksRequest(**request.get_json())
     except Exception as e:
-        LOG.error(f"Bad request payload, {e}")
+        log.error(f"Bad request payload, {e}")
         return (f"bad_request, {e}", 400)
 
     year, month, day = payload.date.split("-")
@@ -33,18 +33,19 @@ def main(request: Request):
 
 def get_ticker_by_smallcase_name(smallcase_name: str):
     params = {"smallcase_name": smallcase_name}
-    resp = requests.get(f"{LAXMI_URL}/tickers/", params=params)
+    resp = requests.get(f"{LAXMI_API_URL}/tickers/", params=params)
     if resp.status_code not in [200, 201]:
-        LOG.error(f"Failed to GET ticker from BE, {resp.json()}")
+        log.error(f"Failed to GET ticker from BE, {resp.json()}")
         raise RequestError("ticker_not_found", 404)
     return resp.json()
 
 
 def post_ticker_candles(exchange_token: str, date: str, candles: dict):
-    url = f"{LAXMI_URL}/tickers/{exchange_token}/candles?date={date}"
-    resp = requests.post(url, json=candles)
+    headers = {"X-CUD-Api-Key": LAXMI_CUD_API_KEY}
+    url = f"{LAXMI_API_URL}/tickers/{exchange_token}/candles?date={date}"
+    resp = requests.post(url, json=candles, headers=headers)
     if resp.status_code not in [200, 201]:
-        LOG.error(f"Failed to POST candlesticks to BE, {resp.json()}")
+        log.error(f"Failed to POST candlesticks to BE, {resp.json()}")
         raise RequestError("candlesticks_not_posted", resp.status_code)
 
 
@@ -55,7 +56,7 @@ def get_upstox_candles(instrument_key: str, year: str, month: str):
     path = f"{instrument_key}/day/{end_date}/{start_date}"
     resp = requests.get(f"{UPSTOX_URL}/historical-candle/{path}")
     if resp.status_code not in [200, 201]:
-        LOG.error(f"Failed to GET candlesticks from upstox, {resp.json()}")
+        log.error(f"Failed to GET candlesticks from upstox, {resp.json()}")
         raise RequestError("candlesticks_not_found", 404)
     return resp.json()["data"]["candles"]
 

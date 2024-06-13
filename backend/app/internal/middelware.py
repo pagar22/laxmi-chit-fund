@@ -49,4 +49,5 @@ def app_middleware(app: FastAPI):
                 )
             if request_api_key != cud_api_key:
                 return JSONResponse(status_code=403, content="Unauthorised, bad key")
+            log.info(f"🔓 CUD API Key validated")
         return await call_next(request)
