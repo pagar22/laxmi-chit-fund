@@ -17,7 +17,6 @@ async def get(id: str):
 
 @router.get("/")
 async def get_by_smallcase_name(smallcase_name: str):
-    print(smallcase_name)
     ticker = await tickerDAO.get_by_smallcase_name(smallcase_name)
     if not ticker:
         raise HTTPException(status_code=404, detail="Ticker not found")

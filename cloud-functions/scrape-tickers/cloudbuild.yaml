@@ -1,0 +1,19 @@
+steps:
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    args:
+      - gcloud
+      - functions
+      - deploy
+      - cf-scrape-tickers
+      - --region=europe-west1
+      - --source=.
+      - --trigger-http
+      - --runtime=python39
+      - --entry-point=main
+      - --memory=128M
+      - --max-instances=1
+      - --set-env-vars=PROJECT_ID=${PROJECT_ID}
+      - --set-env-vars=BUCKET_NAME=${_BUCKET_NAME}
+      - --set-env-vars=UPSTOX_API_URL=${_UPSTOX_API_URL}
+      - --set-env-vars=LAXMI_API_URL=${_LAXMI_API_URL}
+    dir: "cloud-functions/scrape-tickers"
