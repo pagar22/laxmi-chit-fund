@@ -3,7 +3,7 @@ from datetime import datetime
 import functions_framework
 import requests
 from flask import Request
-from utils.config import LAXMI_API_URL, LAXMI_CUD_API_KEY, UPSTOX_URL, log
+from utils.config import LAXMI_API_URL, LAXMI_CUD_API_KEY, UPSTOX_API_URL, log
 from utils.dates import format_date, get_last_day_of_month
 from utils.schemas import CandlesticksRequest, RequestError
 
@@ -54,7 +54,7 @@ def get_upstox_candles(instrument_key: str, year: str, month: str):
     start_date = f"{year}-{month}-01"
     end_date = f"{year}-{month}-{last_day}"
     path = f"{instrument_key}/day/{end_date}/{start_date}"
-    resp = requests.get(f"{UPSTOX_URL}/historical-candle/{path}")
+    resp = requests.get(f"{UPSTOX_API_URL}/historical-candle/{path}")
     if resp.status_code not in [200, 201]:
         log.error(f"Failed to GET candlesticks from upstox, {resp.json()}")
         raise RequestError("candlesticks_not_found", 404)

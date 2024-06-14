@@ -4,7 +4,7 @@ steps:
       - gcloud
       - functions
       - deploy
-      - cf-scrapers-candlesticks
+      - cf-scrape-candlesticks
       - --region=europe-west1
       - --source=.
       - --trigger-http
@@ -12,4 +12,8 @@ steps:
       - --entry-point=main
       - --memory=128M
       - --max-instances=1
+      - --set-env-vars=PROJECT_ID=${PROJECT_ID}
+      - --set-env-vars=BUCKET_NAME=${_BUCKET_NAME}
+      - --set-env-vars=UPSTOX_API_URL=${_UPSTOX_API_URL}
+      - --set-env-vars=LAXMI_API_URL=${_LAXMI_API_URL}
     dir: "cloud-functions/scrape-candlesticks"
