@@ -12,4 +12,4 @@ steps:
       - --entry-point=main
       - --memory=128M
       - --max-instances=1
-    dir: "cloud-functions/scrapers/tickers/candlesticks"
+    dir: "cloud-functions/scrape-candlesticks"
