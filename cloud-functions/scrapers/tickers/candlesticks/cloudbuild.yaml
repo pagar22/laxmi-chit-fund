@@ -1,0 +1,14 @@
+steps:
+  - name: "docker.io/library/python:3.9"
+    args:
+      - gcloud
+      - functions
+      - deploy
+      - cf-scrapers-candlesticks
+      - --region=europe-west1
+      - --source=.
+      - --trigger-http
+      - --runtime=python39
+      - --entry-point=main
+      - --memory=128M
+      - --max-instances=1
