@@ -1,5 +1,5 @@
 steps:
-  - name: "docker.io/library/python:3.9"
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     args:
       - gcloud
       - functions
