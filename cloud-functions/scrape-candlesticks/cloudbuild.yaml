@@ -8,6 +8,7 @@ steps:
       - --region=europe-west1
       - --source=.
       - --trigger-http
+      - --timeout=600s
       - --runtime=python39
       - --entry-point=main
       - --memory=128M
@@ -15,10 +16,5 @@ steps:
       - --set-env-vars=PROJECT_ID=${PROJECT_ID}
       - --set-env-vars=UPSTOX_API_URL=${_UPSTOX_API_URL}
       - --set-env-vars=LAXMI_API_URL=${_LAXMI_API_URL}
+      - --set-secrets=LAXMI_CUD_API_KEY=projects/${PROJECT_ID}/secrets/CUD_API_KEY/versions/latest
     dir: "cloud-functions/scrape-candlesticks"
-    secretEnv: ["LAXMI_CUD_API_KEY"]
-
-availableSecrets:
-  secretManager:
-    - versionName: projects/${PROJECT_ID}/secrets/CUD_API_KEY/versions/latest
-      env: "LAXMI_CUD_API_KEY"
