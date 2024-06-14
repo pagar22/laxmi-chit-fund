@@ -80,7 +80,7 @@ def parse_ticker_from_row(ticker_row: pd.Series) -> dict:
 
 def post_ticker(ticker: dict):
     headers = {"X-CUD-Api-Key": LAXMI_CUD_API_KEY}
-    resp = requests.post(f"{LAXMI_API_URL}/tickers", json=ticker, headers=headers)
+    resp = requests.post(f"{LAXMI_API_URL}/tickers/", json=ticker, headers=headers)
     if resp.status_code not in [200, 201]:
         log.error(f"Failed to create ticker: {resp.json()}")
         raise RequestError(f"ticker_not_posted", resp.status_code)

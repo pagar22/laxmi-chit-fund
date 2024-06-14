@@ -40,7 +40,7 @@ def app_middleware(app: FastAPI):
             # for protected_route in app.routes:
             #     match, scope = protected_route.matches(request)
             #     if match == Match.FULL: # from starlette.routing import Match
-            log.info(f"🔑 CUD API Key needed for {method} to {route}")
+            log.info(f"🔒 CUD API Key needed for {method} to {route}")
             cud_api_key = access_secret_manager("CUD_API_KEY", "latest")
             request_api_key = request.headers.get("X-CUD-Api-Key")
             if not request_api_key:
@@ -49,5 +49,5 @@ def app_middleware(app: FastAPI):
                 )
             if request_api_key != cud_api_key:
                 return JSONResponse(status_code=403, content="Unauthorised, bad key")
-            log.info(f"🔓 CUD API Key validated")
+            log.info(f"🔑 CUD API Key validated")
         return await call_next(request)
