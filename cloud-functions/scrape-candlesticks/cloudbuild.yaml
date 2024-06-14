@@ -8,7 +8,7 @@ steps:
       - --region=europe-west1
       - --source=.
       - --trigger-http
-      - --timeout=600s
+      - --timeout=300s
       - --runtime=python39
       - --entry-point=main
       - --memory=128M
