@@ -8,6 +8,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { routes } from "navigation/route.config";
 import { AppNavigator } from "navigation/app.navigator";
 import { AxiosContextProvider } from "services/axios.context";
+import { AuthenticationContextProvider } from "services/authentication.context";
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -15,12 +16,14 @@ export default function App() {
   return (
     <GluestackUIProvider config={config} colorMode={"dark"}>
       <QueryClientProvider client={queryClient}>
-        <AxiosContextProvider>
-          <NavigationContainer linking={{ config: routes, enabled: true }}>
-            <AppNavigator />
-          </NavigationContainer>
-          <StatusBar style={"light"} />
-        </AxiosContextProvider>
+        <AuthenticationContextProvider>
+          <AxiosContextProvider>
+            <NavigationContainer linking={{ config: routes, enabled: true }}>
+              <AppNavigator />
+            </NavigationContainer>
+            <StatusBar style={"light"} />
+          </AxiosContextProvider>
+        </AuthenticationContextProvider>
       </QueryClientProvider>
     </GluestackUIProvider>
   );

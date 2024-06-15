@@ -4,6 +4,7 @@ import {
   FlatList,
   HStack,
   Image,
+  Spinner,
   Switch,
   Text,
   VStack,
@@ -38,7 +39,10 @@ export const SmallcaseDetailScreen = ({ navigation, route }) => {
               h={40}
               w={40}
               rounded={20}
-              source={{ uri: smallcase.data?.pfp_url }}
+              alt={"smallcase-pfp"}
+              source={
+                smallcase.data?.pfp_url ? { uri: smallcase.data?.pfp_url } : ""
+              }
             />
           </HStack>
           <Text size={"2xs"} color={"$primary200"}>
@@ -104,7 +108,7 @@ export const SmallcaseDetailScreen = ({ navigation, route }) => {
             </>
           )}
         />
-        <SmallcasePerformanceChart smallcase={smallcase.data} />
+        {/* <SmallcasePerformanceChart smallcase={smallcase.data} /> */}
       </VStack>
     </ScreenFrame>
   );

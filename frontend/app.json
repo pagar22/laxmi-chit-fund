@@ -11,6 +11,15 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": [
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow Laxmi Chit Fund to use Face ID for authentication"
+        }
+      ],
+      "expo-secure-store"
+    ],
     "ios": {
       "supportsTablet": true
     },
