@@ -1,8 +1,10 @@
-import { FlatList, Text, VStack } from "@gluestack-ui/themed";
+import { FlatList, HStack, Text, VStack } from "@gluestack-ui/themed";
+import Ionicons from "@expo/vector-icons/Ionicons";
 // internal
 import { ScreenFrame } from "theme/screen-frame.component";
 import { useSmallcases } from "features/smallcases/hooks/useSmallcases";
 import { SmallcaseListItem } from "features/smallcases/components/smallcase-list-item.component";
+import { IconButton } from "theme/icon-button.component";
 
 export const SmallcaseListScreen = ({ navigation }) => {
   const smallcases = useSmallcases();
@@ -10,9 +12,17 @@ export const SmallcaseListScreen = ({ navigation }) => {
   return (
     <ScreenFrame>
       <VStack flex={1} px={10}>
-        <Text size={"2xl"} bold>
-          Smallcases
-        </Text>
+        <HStack justifyContent={"space-between"} alignItems={"center"}>
+          <Text size={"2xl"} bold>
+            Smallcases
+          </Text>
+          <IconButton
+            icon={"settings-outline"}
+            onPress={() => {
+              navigation.navigate("Accounts", { screen: "Settings" });
+            }}
+          />
+        </HStack>
         {smallcases?.data?.length > 0 && (
           <Text
             mb={5}

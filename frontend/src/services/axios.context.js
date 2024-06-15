@@ -6,7 +6,7 @@ import { Platform } from "react-native";
 export const AxiosContext = createContext(null);
 
 export const AxiosContextProvider = ({ children }) => {
-  const baseURL = "https://localhost:7999";
+  const baseURL = "http://localhost:2000";
   const headers = {
     version: "1.0",
     platform: Platform.OS,

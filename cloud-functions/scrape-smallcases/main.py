@@ -14,7 +14,6 @@ def main(request: Request):
     resp = requests.get(f"{SMALLCASE_API_URL}/smallcases/smallcase?scid={smallcase_id}")
     if resp.status_code not in [200, 201]:
         raise Exception(("smallcase_not_found_external", resp.status_code))
-
     try:
         smallcase = get_smallcase(smallcase_id)
         payload = parse_smallcase(smallcase_id, smallcase)

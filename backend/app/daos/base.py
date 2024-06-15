@@ -67,9 +67,9 @@ class BaseDAO(ABC):
         doc = self.collection_reference.document(id or getattr(payload, "id", None))
         data = self._model_dump_json(payload, exclude_none=True)
         if isinstance(batch, Transaction):
-            await batch.set(doc, data)
+            await batch.set(doc, data, merge=True)
         else:
-            await doc.set(data)
+            await doc.set(data, merge=True)
         log.info(f"👩‍🍳 Created doc {doc.id} in {self.collection_path}")
 
     async def batch_create(self, items: List[T]):
