@@ -41,14 +41,16 @@ export const SmallcaseDetailScreen = ({ navigation, route }) => {
               rounded={20}
               alt={"smallcase-pfp"}
               source={
-                smallcase.data?.pfp_url ? { uri: smallcase.data?.pfp_url } : ""
+                smallcase.data?.pfp_url
+                  ? { uri: smallcase.data?.pfp_url }
+                  : { uri: "none" }
               }
             />
           </HStack>
-          <Text size={"2xs"} color={"$primary200"}>
+          <Text size={"xs"} color={"$primary200"}>
             {smallcase.data?.id}
           </Text>
-          <Text size={"2xs"}>{smallcase.data?.description}</Text>
+          <Text size={"xs"}>{smallcase.data?.description}</Text>
         </VStack>
         <HStack mt={10} space={"xl"}>
           {smallcase.data?.investment_strategies?.map((strategy, index) => (
@@ -95,7 +97,7 @@ export const SmallcaseDetailScreen = ({ navigation, route }) => {
                 <Text
                   size={"sm"}
                   textAlign={"right"}
-                  color={kelly && "$tertiary300"}
+                  color={kelly ? "$tertiary300" : "white"}
                 >
                   {`${rounded(
                     kelly
@@ -108,7 +110,9 @@ export const SmallcaseDetailScreen = ({ navigation, route }) => {
             </>
           )}
         />
-        {/* <SmallcasePerformanceChart smallcase={smallcase.data} /> */}
+        {smallcase.isSuccess && (
+          <SmallcasePerformanceChart smallcase={smallcase.data} />
+        )}
       </VStack>
     </ScreenFrame>
   );

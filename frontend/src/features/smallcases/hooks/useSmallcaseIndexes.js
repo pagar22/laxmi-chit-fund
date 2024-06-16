@@ -11,7 +11,7 @@ export const useSmallcaseIndexes = (id) => {
     () => {
       const now = new Date();
       const end_date = formatDate(now); // today
-      const start_date = formatDate(now.setFullYear(now.getFullYear() - 5)); // 5 years ago
+      const start_date = formatDate(now.setFullYear(now.getFullYear() - 1)); // 1 year ago
       return client
         .get(`/smallcases/${id}/indexes?start_date=${start_date}`, {
           params: { start_date, end_date },
