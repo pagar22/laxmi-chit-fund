@@ -1,6 +1,8 @@
 import { createContext } from "react";
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
 
 export const FirebaseContext = createContext(null);
 
@@ -16,14 +18,18 @@ export const FirebaseContextProvider = ({ children }) => {
   };
 
   const app = initializeApp(config);
+  const auth = getAuth(app);
   const firestore = getFirestore(app);
+  const functions = getFunctions(app, "europe-west1");
 
   return (
     <FirebaseContext.Provider
       value={{
         app,
+        auth,
         config,
         firestore,
+        functions,
       }}
     >
       {children}

@@ -42,4 +42,5 @@ yarn-error.*
 venv/
 
 # secrets
+ssl/
 credentials/

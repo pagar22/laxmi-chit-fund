@@ -1,16 +1,21 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
-
 import uuid from "react-native-uuid";
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
-import { set } from "@gluestack-style/react";
+import { signInWithCustomToken } from "firebase/auth";
+// internal
+import { getRandomString } from "services/helpers";
+import { FirebaseContext } from "services/firebase.context";
+import { httpsCallable } from "firebase/functions";
 
 export const AuthenticationContext = createContext(null);
 
 export const AuthenticationContextProvider = ({ children }) => {
+  const { auth, functions } = useContext(FirebaseContext);
+
+  const [user, setUser] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const getDeviceId = async () => {
     const deviceId = await SecureStore.getItemAsync("deviceId");
@@ -22,9 +27,26 @@ export const AuthenticationContextProvider = ({ children }) => {
     return deviceId;
   };
 
-  const getCustomToken = async (deviceId) => {
-    console.debug(`🔐 Getting custom token for device ${deviceId}`);
-    return "yo_token";
+  const getDevicePassword = async () => {
+    const devicePassword = await SecureStore.getItemAsync("devicePassword");
+    if (!devicePassword) {
+      const newDevicePassword = getRandomString();
+      await SecureStore.setItemAsync("devicePassword", newDevicePassword);
+      return newDevicePassword;
+    }
+    return devicePassword;
+  };
+
+  const getCustomToken = async (deviceId, password) => {
+    console.debug(`🔐 Getting custom token for ${deviceId}`);
+    const payload = { deviceId, password };
+    const authCF = httpsCallable(functions, "firebase-auth");
+    return authCF(payload)
+      .then((result) => {
+        console.debug(result, "🔐 Custom token received");
+        return result.data;
+      })
+      .catch((error) => console.error(error));
   };
 
   const getLocalAuthentication = async () => {
@@ -48,21 +70,32 @@ export const AuthenticationContextProvider = ({ children }) => {
     const biometricsPassed = await getLocalAuthentication();
     if (biometricsPassed) {
       const deviceId = await getDeviceId();
-      const customToken = await getCustomToken(deviceId);
-      setIsAuthenticated(true);
-      setIsLoading(false);
+      const password = await getDevicePassword();
+      const customToken = await getCustomToken(deviceId, password);
+      signInWithCustomToken(auth, customToken)
+        .then(async (result) => {
+          console.debug("🔑 User signed in", result.user.uid);
+          const claims = await result.user.getIdTokenResult();
+          const user = Object.assign({}, result.user, claims);
+          setUser(user);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          setIsLoading(false);
+        });
     }
   };
 
   useEffect(() => {
-    if (!isAuthenticated) authenticate();
+    if (!user) authenticate();
   }, []);
 
   return (
-    <AuthenticationContext.Provider value={{ isAuthenticated, authenticate }}>
+    <AuthenticationContext.Provider
+      value={{ user, isLoading, isAuthenticated: !!user, authenticate }}
+    >
       {children}
     </AuthenticationContext.Provider>
   );
 };
-
-// export const useAuth = useContext(AuthenticationContext);
