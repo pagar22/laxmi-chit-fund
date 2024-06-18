@@ -20,7 +20,7 @@ export const AuthenticationContextProvider = ({ children }) => {
   const getDeviceId = async () => {
     const deviceId = await SecureStore.getItemAsync("deviceId");
     if (!deviceId) {
-      const newDeviceId = uuid.v4();
+      const newDeviceId = getRandomString();
       await SecureStore.setItemAsync("deviceId", newDeviceId);
       return newDeviceId;
     }
@@ -30,7 +30,7 @@ export const AuthenticationContextProvider = ({ children }) => {
   const getDevicePassword = async () => {
     const devicePassword = await SecureStore.getItemAsync("devicePassword");
     if (!devicePassword) {
-      const newDevicePassword = getRandomString();
+      const newDevicePassword = uuid.v4();
       await SecureStore.setItemAsync("devicePassword", newDevicePassword);
       return newDevicePassword;
     }
@@ -42,10 +42,7 @@ export const AuthenticationContextProvider = ({ children }) => {
     const payload = { deviceId, password };
     const authCF = httpsCallable(functions, "firebase-auth");
     return authCF(payload)
-      .then((result) => {
-        console.debug(result, "🔐 Custom token received");
-        return result.data;
-      })
+      .then((result) => result.data)
       .catch((error) => console.error(error));
   };
 
@@ -66,9 +63,10 @@ export const AuthenticationContextProvider = ({ children }) => {
 
   const authenticate = async () => {
     if (Platform.OS === "web") return;
-    setIsLoading(true);
+
     const biometricsPassed = await getLocalAuthentication();
     if (biometricsPassed) {
+      setIsLoading(true);
       const deviceId = await getDeviceId();
       const password = await getDevicePassword();
       const customToken = await getCustomToken(deviceId, password);

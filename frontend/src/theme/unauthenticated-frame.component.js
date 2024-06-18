@@ -1,18 +1,26 @@
 import { useContext } from "react";
+import { Dimensions } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { VStack, Text, Button, ButtonText } from "@gluestack-ui/themed";
+import {
+  VStack,
+  Text,
+  Button,
+  ButtonText,
+  Spinner,
+} from "@gluestack-ui/themed";
 // internal
 import { ScreenFrame } from "theme/screen-frame.component";
 import { AuthenticationContext } from "services/authentication.context";
 
 export const UnauthenticatedFrame = ({ children }) => {
+  const { height } = Dimensions.get("screen");
   const { isLoading, authenticate } = useContext(AuthenticationContext);
   return (
     <ScreenFrame>
       <VStack
-        h={500}
         flex={1}
-        space={"xs"}
+        space={"sm"}
+        h={height - 100}
         alignItems={"center"}
         justifyContent={"center"}
       >
@@ -21,20 +29,24 @@ export const UnauthenticatedFrame = ({ children }) => {
           Use your biometrics to continue
         </Text>
         <Button
+          size={"lg"}
           marginTop={20}
           action={"positive"}
-          variant={"outline"}
-          isLoading={isLoading}
+          isDisabled={isLoading}
           onPress={authenticate}
         >
-          <ButtonText>Authenticate</ButtonText>
-          <Ionicons
-            size={24}
-            marginLeft={10}
-            color={"green"}
-            name={"finger-print-outline"}
-          />
+          <ButtonText mx={10}>Authenticate</ButtonText>
+          <Ionicons size={24} color={"white"} name={"finger-print-outline"} />
         </Button>
+        {isLoading && (
+          <VStack position={"absolute"} bottom={150}>
+            <Spinner size={"lg"} color={"$green400"} />
+            <Text size={"md"} textAlign={"center"}>
+              Authenticating...
+            </Text>
+            <Text size={"xs"}>This may take a few seconds</Text>
+          </VStack>
+        )}
       </VStack>
     </ScreenFrame>
   );
