@@ -6,7 +6,8 @@
       "theme/*": ["./src/theme/*"],
       "services/*": ["./src/services/*"],
       "features/*": ["./src/features/*"],
-      "navigation/*": ["./src/navigation/*"]
+      "navigation/*": ["./src/navigation/*"],
+      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
     }
   },
   "extends": "expo/tsconfig.base"

@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import uuid from "react-native-uuid";
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
-import { signInWithCustomToken } from "firebase/auth";
+import { onIdTokenChanged, signInWithCustomToken } from "firebase/auth";
 // internal
 import { getRandomString } from "services/helpers";
 import { FirebaseContext } from "services/firebase.context";
@@ -56,42 +56,52 @@ export const AuthenticationContextProvider = ({ children }) => {
         return true;
       }
     } else {
-      console.debug("👎 Biometrics not supported", hasHardware, hasEnrolled);
+      console.debug("🤯 Biometrics not supported", hasHardware, hasEnrolled);
       return false;
     }
   };
 
   const authenticate = async () => {
     if (Platform.OS === "web") return;
-
     const biometricsPassed = await getLocalAuthentication();
     if (biometricsPassed) {
       setIsLoading(true);
-      const deviceId = await getDeviceId();
-      const password = await getDevicePassword();
-      const customToken = await getCustomToken(deviceId, password);
-      signInWithCustomToken(auth, customToken)
-        .then(async (result) => {
-          console.debug("🔑 User signed in", result.user.uid);
-          const claims = await result.user.getIdTokenResult();
-          const user = Object.assign({}, result.user.toJSON(), claims);
-          setUser(user);
+      onIdTokenChanged(auth, async (user) => {
+        if (!user) {
+          console.debug("👎 Session inactive. Auth needed.");
+          const deviceId = await getDeviceId();
+          const password = await getDevicePassword();
+          const customToken = await getCustomToken(deviceId, password);
+          signInWithCustomToken(auth, customToken)
+            .then(async (result) => {
+              console.debug("🔑 User signed in", result.user.uid);
+              const claims = await result.user.getIdTokenResult();
+              const user = Object.assign({}, result.user.toJSON(), claims);
+              setUser(user);
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              console.error(error);
+              setIsLoading(false);
+            });
+        } else {
+          console.debug("👍 Session active. Auth not needed.", user.uid);
+          const claims = await user.getIdTokenResult();
+          const userWithClaims = Object.assign({}, user.toJSON(), claims);
+          setUser(userWithClaims);
           setIsLoading(false);
-        })
-        .catch((error) => {
-          console.error(error);
-          setIsLoading(false);
-        });
+        }
+      });
     }
   };
 
   useEffect(() => {
-    if (!user) authenticate();
+    authenticate();
   }, []);
 
   return (
     <AuthenticationContext.Provider
-      value={{ user, isLoading, isAuthenticated: !!user, authenticate }}
+      value={{ user, isLoading, isAuthenticated: !!user }}
     >
       {children}
     </AuthenticationContext.Provider>
