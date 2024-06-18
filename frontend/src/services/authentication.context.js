@@ -74,7 +74,7 @@ export const AuthenticationContextProvider = ({ children }) => {
         .then(async (result) => {
           console.debug("🔑 User signed in", result.user.uid);
           const claims = await result.user.getIdTokenResult();
-          const user = Object.assign({}, result.user, claims);
+          const user = Object.assign({}, result.user.toJSON(), claims);
           setUser(user);
           setIsLoading(false);
         })
@@ -97,3 +97,5 @@ export const AuthenticationContextProvider = ({ children }) => {
     </AuthenticationContext.Provider>
   );
 };
+
+export const useAuthentication = () => useContext(AuthenticationContext);

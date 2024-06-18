@@ -12,7 +12,7 @@ import {
 import { ScreenFrame } from "theme/screen-frame.component";
 import { AuthenticationContext } from "services/authentication.context";
 
-export const UnauthenticatedFrame = ({ children }) => {
+export const UnauthenticatedFrame = ({}) => {
   const { height } = Dimensions.get("screen");
   const { isLoading, authenticate } = useContext(AuthenticationContext);
   return (

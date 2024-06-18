@@ -1,13 +1,14 @@
 import { FlatList, HStack, Text, VStack } from "@gluestack-ui/themed";
-import Ionicons from "@expo/vector-icons/Ionicons";
 // internal
+import { IconButton } from "theme/icon-button.component";
 import { ScreenFrame } from "theme/screen-frame.component";
+import { useAuthentication } from "services/authentication.context";
 import { useSmallcases } from "features/smallcases/hooks/useSmallcases";
 import { SmallcaseListItem } from "features/smallcases/components/smallcase-list-item.component";
-import { IconButton } from "theme/icon-button.component";
 
 export const SmallcaseListScreen = ({ navigation }) => {
   const smallcases = useSmallcases();
+  const { user } = useAuthentication();
 
   return (
     <ScreenFrame>
@@ -16,18 +17,20 @@ export const SmallcaseListScreen = ({ navigation }) => {
           <Text size={"2xl"} bold>
             Smallcases
           </Text>
-          <IconButton
-            icon={"settings-outline"}
-            onPress={() => {
-              navigation.navigate("Accounts", { screen: "Settings" });
-            }}
-          />
+          {user?.claims?.is_admin && (
+            <IconButton
+              icon={"rocket-outline"}
+              onPress={() => {
+                navigation.navigate("Accounts", { screen: "Settings" });
+              }}
+            />
+          )}
         </HStack>
         {smallcases?.data?.length > 0 && (
           <Text
             mb={5}
             size={"xs"}
-          >{`${smallcases.data.length} Smallcases Found`}</Text>
+          >{`${smallcases.data.length} Smallcases`}</Text>
         )}
         <FlatList
           py={12}

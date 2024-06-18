@@ -13,6 +13,12 @@ export const camelToTitle = (camelCase) => {
     .replace(/^./, (str) => str.toUpperCase());
 };
 
+export const kebabToTitle = (kebabCase) => {
+  return kebabCase
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
 export const getRandomString = (length = 20) => {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

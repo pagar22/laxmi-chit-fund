@@ -2,7 +2,7 @@ export const routes = {
   screens: {
     Accounts: {
       screens: {
-        Settings: "settings",
+        AdminPanel: "admin",
       },
     },
     Smallcases: {

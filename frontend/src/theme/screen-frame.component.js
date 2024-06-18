@@ -10,7 +10,7 @@ export const ScreenFrame = ({ children }) => {
       flex={1}
       maxHeight={height}
       bg={"$trueGray900"}
-      pt={isWeb ? 10 : 40}
+      pt={isWeb ? 10 : 50}
       KeyboardAvoidingView={false}
     >
       <KeyboardAvoidingView
