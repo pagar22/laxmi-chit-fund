@@ -1,5 +1,5 @@
 uvicorn==0.29.0
-fastapi==0.109.0
+fastapi==0.109.1
 pydantic==2.7.1
 firebase-admin==6.4.0
 google-cloud-secret-manager==2.17.0
