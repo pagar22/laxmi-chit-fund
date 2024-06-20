@@ -63,7 +63,7 @@ def validate_date_range(start_date: str, end_date: str, max_days: int) -> None:
     elif days > max_days:
         raise HTTPException(
             status_code=400,
-            detail=f"Cannot fetch data for more than {365 // days} year(s)",
+            detail=f"Cannot fetch data for more than {366 // days} year(s)",
         )
 
 
