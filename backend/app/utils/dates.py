@@ -57,13 +57,14 @@ def validate_date_range(start_date: str, end_date: str, max_days: int) -> None:
     - buffer_days (int): Number of days to add to max_years to account for leap years or other
     - Returns: None
     """
+    max_days += 10  # Add 10 day buffer (leap years)
     days = _get_days_between_dates(start_date, end_date)
-    if days <= 0:
+    if days < 0:
         raise HTTPException(status_code=400, detail="Invalid date range")
     elif days > max_days:
         raise HTTPException(
             status_code=400,
-            detail=f"Cannot fetch data for more than {366 // days} year(s)",
+            detail=f"Cannot fetch data for more than {max_days // 365} year(s)",
         )
 
 

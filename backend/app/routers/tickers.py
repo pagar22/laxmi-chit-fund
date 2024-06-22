@@ -33,7 +33,7 @@ async def create(ticker: TickerBase):
 async def get_candle_sticks_range(id: str, start_date: str, end_date: str):
     end_date = datestr(end_date)
     start_date = datestr(start_date)
-    validate_date_range(start_date, end_date, max_days=366)
+    validate_date_range(start_date, end_date, max_days=365 * 7)
 
     candles = await tickerDAO.get_candle_sticks(id, start_date, end_date)
     if not candles:
