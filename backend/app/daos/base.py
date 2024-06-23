@@ -5,7 +5,7 @@ from typing import List, Optional, Type, TypeVar
 from app.internal.firebase import db, log
 from app.utils.dates import split_date
 from google.cloud.firestore import DocumentReference, Transaction
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -45,11 +45,16 @@ class BaseDAO(ABC):
         return None
 
     async def get(self, id: str, batch: Optional[Transaction] = None) -> Optional[T]:
-        doc = await self.collection_reference.document(id).get(transaction=batch)
-        if doc.exists:
-            log.info(f"🤩 Found doc {id} in {self.collection_path}")
-            return self.model(**doc.to_dict())
-        return None
+        try:
+            doc = await self.collection_reference.document(id).get(transaction=batch)
+            if doc.exists:
+                log.info(f"🤩 Found doc {id} in {self.collection_path}")
+                return self.model(**doc.to_dict())
+            return None
+        except ValidationError as e:
+            log.error(f"🚨 BAD DATA", e)
+            log.error(f"Error parsing doc {id} in {self.collection_path}")
+            return None
 
     async def stream(self) -> List[T]:
         log.info(f"🌊 Streaming docs from {self.collection_path}")

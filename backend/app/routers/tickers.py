@@ -33,7 +33,7 @@ async def create(ticker: TickerBase):
 async def get_candle_sticks_range(id: str, start_date: str, end_date: str):
     end_date = datestr(end_date)
     start_date = datestr(start_date)
-    validate_date_range(start_date, end_date, max_days=365 * 7)
+    validate_date_range(start_date, end_date, max_days=365 * 1)
 
     candles = await tickerDAO.get_candle_sticks(id, start_date, end_date)
     if not candles:
@@ -51,7 +51,7 @@ async def get_candle_sticks_monthly(id: str, date: str):
     return candle
 
 
-@router.post("/{id}/candles", status_code=201)
+@router.put("/{id}/candles", status_code=201)
 async def create_candle_sticks(id: str, candle_sticks: CandleStickBase, date: str):
     date = datestr(date)
     ticker = await tickerDAO.get(id)
