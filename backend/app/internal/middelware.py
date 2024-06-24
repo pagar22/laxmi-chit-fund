@@ -1,4 +1,4 @@
-from app.internal.config import access_secret_manager
+from app.internal.config import IS_EMULATOR_CONNECTED, access_secret_manager
 from app.internal.firebase import log
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -36,7 +36,7 @@ def app_middleware(app: FastAPI):
     async def validate_cud_api_key(request: Request, call_next):
         protected_methods = ["POST", "PATCH", "PUT", "DELETE"]
         method, route = request.method, request.url.path
-        if method in protected_methods:
+        if method in protected_methods and not IS_EMULATOR_CONNECTED:
             # for protected_route in app.routes:
             #     match, scope = protected_route.matches(request)
             #     if match == Match.FULL: # from starlette.routing import Match

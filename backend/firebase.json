@@ -1,0 +1,14 @@
+{
+  "emulators": {
+    "firestore": {
+      "port": 2021,
+      "host": "0.0.0.0"
+    },
+    "ui": {
+      "enabled": true,
+      "port": 2020,
+      "host": "0.0.0.0"
+    },
+    "singleProjectMode": true
+  }
+}
