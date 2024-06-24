@@ -17,7 +17,12 @@ def __is_emulator_connected(host, port):
     except requests.exceptions.RequestException:
         connected = False
     finally:
-        print(f"🧩 Emulator connected: {connected}")
+        if connected:
+            print(f"💚 Emulator connected")
+            os.environ["FIRESTORE_EMULATOR_HOST"] = f"{host}:{port}"
+        else:
+            print(f"💛 Emulator NOT connected")
+            os.environ.pop("FIRESTORE_EMULATOR_HOST", None)
         return connected
 
 
@@ -36,4 +41,4 @@ def access_secret_manager(
 
 
 PROJECT_ID = os.getenv("PROJECT_ID", "laxmi-chit-fund-letsgetit")
-IS_EMULATOR_CONNECTED = __is_emulator_connected("localhost", 2021)  # Firestore port
+IS_EMULATOR_CONNECTED = __is_emulator_connected("firestore-emulator", 2021)

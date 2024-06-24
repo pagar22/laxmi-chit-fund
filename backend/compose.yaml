@@ -5,8 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # depends_on:
-    #   - firebase
+    depends_on:
+      - firestore-emulator
     container_name: laxmi-chit-fund-api
     working_dir: /app
     volumes:
@@ -15,20 +15,16 @@ services:
     environment:
       PORT: 2000
       PYTHONDONTWRITEBYTECODE: 1
-      GCLOUD_PROJECT: laxmi-chit-fund-letsgetit
-      # FIRESTORE_EMULATOR_HOST: firebase:8080
+      GCLOUD_PROJECT: demo-laxmi-chit-fund-letsgetit
     ports:
       - 2000:2000
     command: uvicorn app.main:app --host 0.0.0.0 --port 2000 --reload
     restart: on-failure
 
-  # firebase:
-  #   image: spine3/firebase-emulator
-  #   environment:
-  #     LOG_LEVEL: error
-  #     UI_EMULATOR_PORT: 4400
-  #     FIRESTORE_EMULATOR_PORT: 8080
-  #     GCP_PROJECT: demo-laxmi-chit-fund-letsgetit
-  #   ports:
-  #     - 4400:4400
-  #     - 8080:8080
+  firestore-emulator:
+    image: mtlynch/firestore-emulator
+    environment:
+      PORT: 2021
+      FIRESTORE_PROJECT_ID: demo-laxmi-chit-fund-letsgetit
+    ports:
+      - 2021:2021
