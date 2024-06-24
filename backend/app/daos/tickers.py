@@ -47,4 +47,4 @@ class TickerDAO(BaseDAO):
         self, exchange_token: str, payload: CandleStickBase, date: str
     ):
         data = self._model_dump_json(payload, exclude_none=True)
-        await self._create_nested_monthly_doc(exchange_token, "candles", date, data)
+        await self._create_nested_hist_doc(exchange_token, "candles", date, data)

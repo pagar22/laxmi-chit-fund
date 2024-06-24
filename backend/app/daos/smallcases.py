@@ -73,14 +73,14 @@ class SmallcaseDAO(BaseDAO):
     async def create_constituents(self, id: str, payload: SmallcaseConstituentsBase):
         date = payload.start_date
         data = self._model_dump_json(payload)
-        await self._create_nested_monthly_doc(id, "constituents", date, data)
+        await self._create_nested_hist_doc(id, "constituents", date, data)
 
     async def create_indexes(self, id: str, payload: SmallcaseIndexesBase, date: str):
         data = self._model_dump_json(payload, exclude_none=True)
-        await self._create_nested_monthly_doc(id, "indexes", date, data)
+        await self._create_nested_hist_doc(id, "indexes", date, data)
 
     async def create_statistics(
         self, id: str, payload: SmallcaseStatisticsBase, date: str
     ):
         data = self._model_dump_json(payload, exclude_none=True)
-        await self._create_nested_monthly_doc(id, "statistics", date, data)
+        await self._create_nested_hist_doc(id, "statistics", date, data)

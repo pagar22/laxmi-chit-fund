@@ -3,7 +3,6 @@ from abc import ABC
 from typing import List, Optional, Type, TypeVar
 
 from app.internal.firebase import db, log
-from app.utils.dates import datestr
 from google.cloud.firestore import DocumentReference, Transaction
 from pydantic import BaseModel, ValidationError
 
@@ -28,10 +27,9 @@ class BaseDAO(ABC):
         path = f"{doc_id}/{nested_collection_id}/{date}"
         return await self.collection_reference.document(path).get()
 
-    async def _create_nested_monthly_doc(
+    async def _create_nested_hist_doc(
         self, doc_id, nested_collection_id, date: str, payload: dict
     ):
-        date = datestr(date)
         path = f"{doc_id}/{nested_collection_id}/{date}"
         await self.collection_reference.document(path).set(payload)
         log.info(f"👩‍🍳 Created {nested_collection_id} for {doc_id} at {date}")
