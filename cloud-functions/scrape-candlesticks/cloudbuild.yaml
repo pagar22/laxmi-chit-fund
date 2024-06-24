@@ -1,4 +1,25 @@
 steps:
+  - name: "python:3.9"
+    id: "install-dependencies"
+    dir: "cloud-functions/scrape-candlesticks"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+
+  - name: "python:3.9"
+    id: "tests"
+    dir: "cloud-functions/scrape-candlesticks"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        source venv/bin/activate
+        python -m unittest
+
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     args:
       - gcloud
@@ -18,3 +39,4 @@ steps:
       - --set-env-vars=LAXMI_API_URL=${_LAXMI_API_URL}
       - --set-secrets=LAXMI_CUD_API_KEY=projects/${PROJECT_ID}/secrets/CUD_API_KEY/versions/latest
     dir: "cloud-functions/scrape-candlesticks"
+    waitFor: ["tests"]
