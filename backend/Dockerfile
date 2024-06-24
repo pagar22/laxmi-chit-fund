@@ -3,8 +3,10 @@ FROM tiangolo/uvicorn-gunicorn:python3.11
 WORKDIR /app
 
 COPY ./requirements.txt /backend/requirements.txt
+COPY ./tests/test_requirements.txt /backend/tests/test_requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /backend/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /backend/tests/test_requirements.txt
 
 COPY app app/
 

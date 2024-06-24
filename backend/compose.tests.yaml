@@ -1,0 +1,25 @@
+version: "3.11"
+
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - firestore-emulator
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ~/.config/gcloud:/root/.config/gcloud
+    environment:
+      PYTHONDONTWRITEBYTECODE: 1
+      GCLOUD_PROJECT: demo-laxmi-chit-fund-letsgetit
+    command: sh -c "pytest ${PYTEST_ARGS}"
+
+  firestore-emulator:
+    image: mtlynch/firestore-emulator
+    environment:
+      PORT: 2021
+      FIRESTORE_PROJECT_ID: demo-laxmi-chit-fund-letsgetit
+    ports:
+      - 2021:2021

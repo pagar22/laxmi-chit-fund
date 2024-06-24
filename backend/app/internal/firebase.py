@@ -23,5 +23,5 @@ else:
 
 # Services
 db = firestore_async.client()
-log = __logging.getLogger("uvicorn.error")
+log = __logging.getLogger("uvicorn.app")
 bucket = storage.bucket(__storage_bucket_path)

@@ -1,3 +1,4 @@
+import logging
 import os
 
 import requests
@@ -7,6 +8,8 @@ from google.cloud.secretmanager import (
     AccessSecretVersionResponse,
     SecretManagerServiceClient,
 )
+
+log = logging.getLogger("uvicorn.app")
 
 
 def __is_emulator_connected(host, port):
@@ -18,10 +21,10 @@ def __is_emulator_connected(host, port):
         connected = False
     finally:
         if connected:
-            print(f"💚 Emulator connected")
+            log.info(f"💚 Emulator connected")
             os.environ["FIRESTORE_EMULATOR_HOST"] = f"{host}:{port}"
         else:
-            print(f"💛 Emulator NOT connected")
+            log.info(f"💛 Emulator NOT connected")
             os.environ.pop("FIRESTORE_EMULATOR_HOST", None)
         return connected
 
