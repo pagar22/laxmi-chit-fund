@@ -1,3 +1,4 @@
+functions_framework
 pydantic==2.7.1
 requests==2.32.3
 Flask==2.3.3
