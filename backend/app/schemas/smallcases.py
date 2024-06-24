@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Dict, Optional
 
 from app.schemas.common import MonthlyBase
-from app.utils.dates import format_date
+from app.utils.dates import datestr
 from pydantic import BaseModel, field_validator
 
 
@@ -80,7 +80,7 @@ class SmallcaseConstituentsBase(BaseModel):
 
     @field_validator("start_date", "end_date")
     def validate_dates(cls, v):
-        format_date(v)
+        datestr(v)
         return v
 
 
@@ -98,13 +98,13 @@ class SmallcaseIndexesBase(BaseModel):
 
     @field_validator("start_date", "end_date")
     def validate_dates(cls, v):
-        format_date(v)
+        datestr(v)
         return v
 
     @field_validator("indexes")
     def validate_indexes(cls, v):
         for key in v:
-            format_date(key)
+            datestr(key)
         return v
 
 

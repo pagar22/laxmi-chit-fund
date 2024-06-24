@@ -51,11 +51,7 @@ async def create_constituents(id: str, constituents: SmallcaseConstituentsBase):
 
 @router.get("/{id}/indexes", response_model=dict[str, IndexBase])
 async def get_indexes(id: str, start_date: str, end_date: str):
-    end_date = datestr(end_date)
-    start_date = datestr(start_date)
-    MAX_DAYS = 365 * 5 + 2
-    validate_date_range(start_date, end_date, MAX_DAYS)
-
+    validate_date_range(start_date, end_date, max_days=365 * 5)
     indexes = await smallcaseDAO.get_indexes(id, start_date, end_date)
     if not indexes:
         raise HTTPException(status_code=404, detail="Indexes not found")

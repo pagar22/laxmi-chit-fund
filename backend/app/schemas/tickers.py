@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Dict, Optional
 
 from app.schemas.common import MonthlyBase, TimeStamp
-from app.utils.dates import format_date
+from app.utils.dates import datestr
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -43,5 +43,5 @@ class CandleStickBase(MonthlyBase):
     @field_validator("daily")
     def validate_daily(cls, v):
         for key in v:
-            format_date(key)
+            datestr(key)
         return v

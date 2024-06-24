@@ -2,7 +2,7 @@ from typing import Optional
 
 from app.daos.base import BaseDAO
 from app.schemas.tickers import CandleStickBase, TickerBase
-from app.utils.dates import format_date, get_date, split_date
+from app.utils.dates import dateparse, datestr
 from dateutil.relativedelta import relativedelta
 
 
@@ -20,9 +20,9 @@ class TickerDAO(BaseDAO):
             return self.model(**docs[0].to_dict())
 
     async def get_candle_doc(
-        self, exchange_token: str, year: str, month: str
+        self, exchange_token: str, date: str
     ) -> Optional[CandleStickBase]:
-        path = f"{exchange_token}/candles/{year}-{month}"
+        path = f"{exchange_token}/candles/{date}"
         doc = await self.collection_reference.document(path).get()
         return CandleStickBase(**doc.to_dict()) if doc.exists else None
 
@@ -30,13 +30,12 @@ class TickerDAO(BaseDAO):
         self, exchange_token: str, start_date: str, end_date: str
     ):
         candles = {}
-        start = get_date(start_date)
-        end = get_date(end_date)
+        end = dateparse(end_date)
+        start = dateparse(start_date)
 
         while (start.year, start.month) <= (end.year, end.month):
-            date = format_date(str(start))
-            y, m, d = split_date(date)
-            doc = await self.get_candle_doc(exchange_token, y, m)
+            date = datestr(str(start))
+            doc = await self.get_candle_doc(exchange_token, date)
             if doc:
                 candles.update(doc.daily)
             start += relativedelta(months=1)
