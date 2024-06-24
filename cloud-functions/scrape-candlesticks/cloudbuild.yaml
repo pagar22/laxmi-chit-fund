@@ -20,6 +20,14 @@ steps:
         source venv/bin/activate
         python -m unittest
 
+  - name: "python:3.9"
+    id: "remove-venv"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        rm -rf venv
+
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     args:
       - gcloud
