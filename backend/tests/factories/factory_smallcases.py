@@ -82,3 +82,46 @@ def f_smallcase_constituents(
         return id, constituents
 
     return _f_smallcase_constituents
+
+
+@pytest.fixture(scope="function")
+def f_smallcase_indexes_payload(faker):
+    return {
+        "start_date": "2020-01-01",
+        "end_date": "2020-01-03",
+        "indexes": {
+            "2020-01-01": {
+                "kelly": faker.pyfloat(),
+                "smallcase": faker.pyfloat(),
+                "benchmark": faker.pyfloat(),
+            },
+            "2020-01-02": {
+                "kelly": faker.pyfloat(),
+                "smallcase": faker.pyfloat(),
+                "benchmark": faker.pyfloat(),
+            },
+            "2020-01-03": {
+                "kelly": faker.pyfloat(),
+                "smallcase": faker.pyfloat(),
+                "benchmark": faker.pyfloat(),
+            },
+        },
+    }
+
+
+@pytest.fixture(scope="function")
+def f_smallcase_indexes(test_app, f_smallcase_payload, f_smallcase_indexes_payload):
+    async def _f_smallcase_indexes():
+        smallcase = f_smallcase_payload
+        id = smallcase["id"]
+        resp = await test_app.post(url="/smallcases", json=smallcase)
+        assert resp.status_code == 201
+
+        url = f"/smallcases/{id}/indexes"
+        indexes = f_smallcase_indexes_payload
+        params = {"date": indexes["start_date"]}
+        resp = await test_app.post(url=url, params=params, json=indexes)
+        assert resp.status_code == 201
+        return id, indexes
+
+    return _f_smallcase_indexes
