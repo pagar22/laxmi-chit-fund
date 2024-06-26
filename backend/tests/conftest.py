@@ -1,3 +1,5 @@
+import asyncio
+
 import pytest
 import pytest_asyncio
 from app.internal.config import IS_EMULATOR_CONNECTED
@@ -21,6 +23,13 @@ def faker() -> Faker:
     faker = Faker("en_GB")
     faker.random.seed()
     return faker
+
+
+@pytest_asyncio.fixture(scope="session")
+def event_loop():
+    loop = asyncio.new_event_loop()
+    yield loop
+    loop.close()
 
 
 @pytest_asyncio.fixture(scope="module")
