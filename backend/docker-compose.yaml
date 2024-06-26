@@ -25,7 +25,7 @@ services:
     image: spine3/firebase-emulator
     environment:
       PORT: 2021
-      UI_ENABLED: True
+      UI_ENABLED: "true"
       UI_EMULATOR_PORT: 2020
       FIRESTORE_EMULATOR_PORT: 2021
       GCP_PROJECT: demo-laxmi-chit-fund-letsgetit
