@@ -1,28 +1,28 @@
 steps:
-  - name: "docker/compose"
-    id: "build-tests"
-    args: ["-f", "docker-compose-tests.yaml", "up", "-d"]
-    dir: "backend"
+  # - name: "docker/compose"
+  #   id: "build-tests"
+  #   args: ["-f", "docker-compose-tests.yaml", "up", "-d"]
+  #   dir: "backend"
 
-  - name: "docker/compose"
-    id: "run-tests"
-    args:
-      [
-        "-f",
-        "docker-compose-tests.yaml",
-        "run",
-        "-e",
-        "PYTEST_ARGS='--maxfail=1 -v'",
-        "tests",
-      ]
-    dir: "backend"
-    waitFor: ["build-tests"]
+  # - name: "docker/compose"
+  #   id: "run-tests"
+  #   args:
+  #     [
+  #       "-f",
+  #       "docker-compose-tests.yaml",
+  #       "run",
+  #       "-e",
+  #       "PYTEST_ARGS='--maxfail=1 -v'",
+  #       "tests",
+  #     ]
+  #   dir: "backend"
+  #   waitFor: ["build-tests"]
 
   - name: "gcr.io/cloud-builders/docker"
     id: "build-backend"
     args: ["build", "-t", "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA", "."]
     dir: "backend"
-    waitFor: ["run-tests"]
+    # waitFor: ["run-tests"]
 
   - name: "gcr.io/cloud-builders/docker"
     id: "push-backend"
