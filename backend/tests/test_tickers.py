@@ -23,16 +23,6 @@ async def test_get_ticker_not_found(test_app):
 
 
 @pytest.mark.asyncio
-async def test_create_ticker(test_app, f_ticker_base_payload):
-    # Given
-    payload = f_ticker_base_payload
-    # When
-    resp = await test_app.post(url="/tickers", json=payload)
-    # Test
-    assert resp.status_code == 201
-
-
-@pytest.mark.asyncio
 async def test_get_ticker_by_smallcase_name(test_app, f_ticker_base):
     # Given
     exchange_token, smallcase_name = await f_ticker_base()
@@ -45,11 +35,11 @@ async def test_get_ticker_by_smallcase_name(test_app, f_ticker_base):
 
 @pytest.mark.asyncio
 async def test_get_ticker_candlesticks(
-    test_app, f_ticker_candle_stick_payload, f_ticker_candle_stick
+    test_app, f_ticker_candlestick_payload, f_ticker_candlestick
 ):
     # Given
-    exchange_token = await f_ticker_candle_stick()
-    candle_dates = list(f_ticker_candle_stick_payload["daily"].keys())
+    exchange_token = await f_ticker_candlestick()
+    candle_dates = list(f_ticker_candlestick_payload["daily"].keys())
     end_date = candle_dates[-1]
     start_date = candle_dates[0]
     # When
@@ -57,4 +47,4 @@ async def test_get_ticker_candlesticks(
     resp = await test_app.get(url=f"/tickers/{exchange_token}/candles", params=params)
     # Test
     assert resp.status_code == 200
-    assert len(resp.json()) == len(f_ticker_candle_stick_payload)
+    assert len(resp.json()) == len(f_ticker_candlestick_payload)

@@ -1,6 +1,6 @@
 import pytest
 from app.daos.tickers import TickerDAO
-from app.schemas.tickers import CandleStickBase, TickerBase
+from app.schemas.tickers import TickerBase
 
 
 @pytest.fixture(scope="function")
@@ -29,7 +29,7 @@ def f_ticker_base(faker, f_ticker_base_payload):
 
 
 @pytest.fixture(scope="function")
-def f_ticker_candle_stick_payload(faker):
+def f_ticker_candlestick_payload(faker):
     dates = ["2020-01-01", "2020-01-02", "2020-01-03"]
     daily_data = {
         date: {
@@ -49,12 +49,18 @@ def f_ticker_candle_stick_payload(faker):
 
 
 @pytest.fixture(scope="function")
-def f_ticker_candle_stick(faker, f_ticker_base_payload, f_ticker_candle_stick_payload):
-    async def _f_ticker_candle_stick():
-        dao = TickerDAO()
-        id = f_ticker_base_payload["exchange_token"]
-        candles = CandleStickBase(**f_ticker_candle_stick_payload)
-        await dao.create_candle_sticks(id, candles, "2020-01")
+def f_ticker_candlestick(test_app, f_ticker_base_payload, f_ticker_candlestick_payload):
+    async def _f_ticker_candlestick():
+        ticker = f_ticker_base_payload
+        id = ticker["exchange_token"]
+        resp = await test_app.post(url="/tickers", json=ticker)
+        assert resp.status_code == 201
+
+        url = f"/tickers/{id}/candles"
+        candles = f_ticker_candlestick_payload
+        params = {"date": list(candles["daily"].keys())[0]}
+        resp = await test_app.post(url=url, params=params, json=candles)
+        assert resp.status_code == 201
         return id
 
-    return _f_ticker_candle_stick
+    return _f_ticker_candlestick
