@@ -1,10 +1,8 @@
 import pytest
-from app.daos.tickers import TickerDAO
-from app.schemas.tickers import TickerBase
 
 
 @pytest.fixture(scope="function")
-def f_ticker_base_payload(faker):
+def f_ticker_payload(faker):
     return {
         "name": faker.company(),
         "ticker": faker.word(),
@@ -18,14 +16,14 @@ def f_ticker_base_payload(faker):
 
 
 @pytest.fixture(scope="function")
-def f_ticker_base(faker, f_ticker_base_payload):
-    async def _f_ticker_base():
-        dao = TickerDAO()
-        id = f_ticker_base_payload["exchange_token"]
-        await dao.create(TickerBase(**f_ticker_base_payload), str(id))
-        return id, f_ticker_base_payload["smallcase_name"]
+def f_ticker(test_app, f_ticker_payload):
+    async def _f_ticker():
+        id = f_ticker_payload["exchange_token"]
+        resp = await test_app.post(url="/tickers", json=f_ticker_payload)
+        assert resp.status_code == 201
+        return id, f_ticker_payload["smallcase_name"]
 
-    return _f_ticker_base
+    return _f_ticker
 
 
 @pytest.fixture(scope="function")
@@ -49,9 +47,9 @@ def f_ticker_candlestick_payload(faker):
 
 
 @pytest.fixture(scope="function")
-def f_ticker_candlestick(test_app, f_ticker_base_payload, f_ticker_candlestick_payload):
-    async def _f_ticker_candlestick():
-        ticker = f_ticker_base_payload
+def f_ticker_candlesticks(test_app, f_ticker_payload, f_ticker_candlestick_payload):
+    async def _f_ticker_candlesticks():
+        ticker = f_ticker_payload
         id = ticker["exchange_token"]
         resp = await test_app.post(url="/tickers", json=ticker)
         assert resp.status_code == 201
@@ -61,6 +59,6 @@ def f_ticker_candlestick(test_app, f_ticker_base_payload, f_ticker_candlestick_p
         params = {"date": list(candles["daily"].keys())[0]}
         resp = await test_app.post(url=url, params=params, json=candles)
         assert resp.status_code == 201
-        return id
+        return id, candles
 
-    return _f_ticker_candlestick
+    return _f_ticker_candlesticks
