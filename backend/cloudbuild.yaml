@@ -1,7 +1,3 @@
-substitutions:
-  _REGION: europe-west1
-  _IMAGE_PATH: europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/laxmi-chit-fund:$COMMIT_SHA
-
 steps:
   - name: "docker/compose:2.19.1"
     id: "build-tests"
@@ -24,12 +20,22 @@ steps:
 
   - name: "gcr.io/cloud-builders/docker"
     id: "build-backend"
-    args: ["build", "-t", "$_IMAGE_PATH", "."]
+    args:
+      [
+        "build",
+        "-t",
+        "europe-west1-docker.pkg.dev/$PROJECT_ID/laxmi-chit-fund:$SHORT_SHA",
+        ".",
+      ]
     dir: "backend"
 
   - name: "gcr.io/cloud-builders/docker"
     id: "push-backend"
-    args: ["push", "$_IMAGE_PATH"]
+    args:
+      [
+        "push",
+        "europe-west1-docker.pkg.dev/$PROJECT_ID/laxmi-chit-fund:$SHORT_SHA",
+      ]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
@@ -39,9 +45,9 @@ steps:
       - "deploy"
       - "laxmi-chit-fund"
       - "--image"
-      - "$_IMAGE_PATH"
+      - "europe-west1-docker.pkg.dev/$PROJECT_ID/laxmi-chit-fund:$SHORT_SHA"
       - "--region"
       - "$_REGION"
 
 images:
-  - "$_IMAGE_PATH"
+  - "europe-west1-docker.pkg.dev/$PROJECT_ID/laxmi-chit-fund:$SHORT_SHA"
