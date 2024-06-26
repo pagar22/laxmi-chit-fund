@@ -1,7 +1,6 @@
 substitutions:
   _REGION: europe-west1
-  _REPO: cloud-run-source-deploy
-  _IMAGE_PATH: $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/laxmi-chit-fund:$COMMIT_SHA
+  _IMAGE_PATH: europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/laxmi-chit-fund:$COMMIT_SHA
 
 steps:
   - name: "docker/compose:2.19.1"
@@ -20,18 +19,21 @@ steps:
         "PYTEST_ARGS=--maxfail=1 -v",
         "tests",
       ]
-    dir: "backend"
     waitFor: ["build-tests"]
+    dir: "backend"
 
   - name: "gcr.io/cloud-builders/docker"
+    id: "build-backend"
     args: ["build", "-t", "$_IMAGE_PATH", "."]
     dir: "backend"
 
   - name: "gcr.io/cloud-builders/docker"
+    id: "push-backend"
     args: ["push", "$_IMAGE_PATH"]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
+    id: "deploy-backend"
     args:
       - "run"
       - "deploy"
@@ -39,8 +41,7 @@ steps:
       - "--image"
       - "$_IMAGE_PATH"
       - "--region"
-      - "europe-west1"
-    waitFor: ["push-backend"]
+      - "$_REGION"
 
 images:
   - "$_IMAGE_PATH"
