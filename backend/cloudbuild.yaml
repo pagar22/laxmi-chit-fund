@@ -1,10 +1,10 @@
 steps:
-  - name: "docker/compose:2.19.1"
+  - name: "docker/compose"
     id: "build-tests"
     args: ["-f", "docker-compose-tests.yaml", "up", "-d"]
     dir: "backend"
 
-  - name: "docker/compose:2.19.1"
+  - name: "docker/compose"
     id: "run-tests"
     args:
       [
