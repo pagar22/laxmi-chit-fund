@@ -1,10 +1,15 @@
+substitutions:
+  _REGION: europe-west1
+  _REPO: cloud-run-source-deploy
+  _IMAGE_PATH: $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/laxmi-chit-fund:$COMMIT_SHA
+
 steps:
-  - name: "docker/compose"
+  - name: "docker/compose:2.19.1"
     id: "build-tests"
     args: ["-f", "docker-compose-tests.yaml", "up", "-d"]
     dir: "backend"
 
-  - name: "docker/compose"
+  - name: "docker/compose:2.19.1"
     id: "run-tests"
     args:
       [
@@ -12,22 +17,18 @@ steps:
         "docker-compose-tests.yaml",
         "run",
         "-e",
-        "PYTEST_ARGS='--maxfail=1 -v'",
+        "PYTEST_ARGS=--maxfail=1 -v",
         "tests",
       ]
     dir: "backend"
     waitFor: ["build-tests"]
 
   - name: "gcr.io/cloud-builders/docker"
-    id: "build-backend"
-    args: ["build", "-t", "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA", "."]
+    args: ["build", "-t", "$_IMAGE_PATH", "."]
     dir: "backend"
-    waitFor: ["run-tests"]
 
   - name: "gcr.io/cloud-builders/docker"
-    id: "push-backend"
-    args: ["push", "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA"]
-    waitFor: ["build-backend"]
+    args: ["push", "$_IMAGE_PATH"]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
@@ -36,10 +37,10 @@ steps:
       - "deploy"
       - "laxmi-chit-fund"
       - "--image"
-      - "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA"
+      - "$_IMAGE_PATH"
       - "--region"
       - "europe-west1"
     waitFor: ["push-backend"]
 
 images:
-  - "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA"
+  - "$_IMAGE_PATH"
