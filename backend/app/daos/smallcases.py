@@ -33,8 +33,9 @@ class SmallcaseDAO(BaseDAO):
                     return constituents
         else:
             end_filter = FieldFilter("end_date", ">=", date)
-            filter_docs = await ref.where(filter=end_filter).get()
-            docs = [doc for doc in filter_docs if doc.get("start_date") <= date]
+            start_filter = FieldFilter("start_date", "<=", date)
+            query = ref.where(filter=start_filter).where(filter=end_filter).limit(1)
+            docs = await query.get()
             if docs:
                 log.info(f"🥧 Fetched constituents for {id} at {date}")
                 return SmallcaseConstituentsBase(**docs[0].to_dict())
