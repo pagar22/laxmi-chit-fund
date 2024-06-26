@@ -25,12 +25,13 @@ steps:
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
     args:
-    - "run"
-    - "deploy"
-    - "laxmi-chit-fund"
-    - "--image"
-    - "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA"
-    - "--region"
-    - "europe-west1"
-  images:
+      - "run"
+      - "deploy"
+      - "laxmi-chit-fund"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA"
+      - "--region"
+      - "europe-west1"
+
+images:
   - "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA"
