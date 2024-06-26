@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - firestore-emulator
+      - firebase-emulator
     working_dir: /app
     volumes:
       - .:/app
@@ -16,7 +16,7 @@ services:
       GCLOUD_PROJECT: demo-laxmi-chit-fund-letsgetit
     command: sh -c "pytest ${PYTEST_ARGS}"
 
-  firestore-emulator:
+  firebase-emulator:
     image: spine3/firebase-emulator
     environment:
       PORT: 2021

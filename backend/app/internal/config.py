@@ -44,4 +44,4 @@ def access_secret_manager(
 
 
 PROJECT_ID = os.getenv("PROJECT_ID", "laxmi-chit-fund-letsgetit")
-IS_EMULATOR_CONNECTED = __is_emulator_connected("firestore-emulator", 2021)
+IS_EMULATOR_CONNECTED = __is_emulator_connected("firebase-emulator", 2021)
