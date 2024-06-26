@@ -1,0 +1,53 @@
+steps:
+  - name: "docker/compose"
+    id: "build-tests"
+    args: ["-f", "docker-compose-tests.yaml", "up", "-d"]
+    dir: "backend"
+
+  - name: "docker/compose"
+    id: "run-tests"
+    args:
+      [
+        "-f",
+        "docker-compose-tests.yaml",
+        "run",
+        "-e",
+        "PYTEST_ARGS=--maxfail=1 -v",
+        "tests",
+      ]
+    waitFor: ["build-tests"]
+    dir: "backend"
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: "build-backend"
+    args:
+      [
+        "build",
+        "-t",
+        "europe-west1-docker.pkg.dev/$PROJECT_ID/laxmi-chit-fund:$SHORT_SHA",
+        ".",
+      ]
+    dir: "backend"
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: "push-backend"
+    args:
+      [
+        "push",
+        "europe-west1-docker.pkg.dev/$PROJECT_ID/laxmi-chit-fund:$SHORT_SHA",
+      ]
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    id: "deploy-backend"
+    args:
+      - "run"
+      - "deploy"
+      - "laxmi-chit-fund"
+      - "--image"
+      - "europe-west1-docker.pkg.dev/$PROJECT_ID/laxmi-chit-fund:$SHORT_SHA"
+      - "--region"
+      - "$_REGION"
+
+images:
+  - "europe-west1-docker.pkg.dev/$PROJECT_ID/laxmi-chit-fund:$SHORT_SHA"

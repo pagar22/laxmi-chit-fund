@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app.daos.base import BaseDAO
+from app.internal.config import IS_EMULATOR_CONNECTED
 from app.internal.firebase import log
 from app.schemas.smallcases import (
     SmallcaseBase,
@@ -32,9 +33,16 @@ class SmallcaseDAO(BaseDAO):
                     log.info(f"🤷‍♀️ Returning latest constituents for {id} at {date}")
                     return constituents
         else:
-            end_filter = FieldFilter("end_date", ">=", date)
-            filter_docs = await ref.where(filter=end_filter).get()
-            docs = [doc for doc in filter_docs if doc.get("start_date") <= date]
+            if not IS_EMULATOR_CONNECTED:
+                end_filter = FieldFilter("end_date", ">=", date)
+                start_filter = FieldFilter("start_date", "<=", date)
+                query = ref.where(filter=start_filter).where(filter=end_filter).limit(1)
+                docs = await query.get()
+            else:
+                start_filter = FieldFilter("start_date", "<=", date)
+                filtered_docs = await ref.where(filter=start_filter).get()
+                docs = [doc for doc in filtered_docs if doc.get("end_date") >= date]
+
             if docs:
                 log.info(f"🥧 Fetched constituents for {id} at {date}")
                 return SmallcaseConstituentsBase(**docs[0].to_dict())

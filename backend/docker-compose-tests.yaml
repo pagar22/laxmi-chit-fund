@@ -1,10 +1,12 @@
+version: "3.8"
+
 services:
   tests:
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - firestore-emulator
+      - firebase-emulator
     working_dir: /app
     volumes:
       - .:/app
@@ -14,10 +16,14 @@ services:
       GCLOUD_PROJECT: demo-laxmi-chit-fund-letsgetit
     command: sh -c "pytest ${PYTEST_ARGS}"
 
-  firestore-emulator:
-    image: mtlynch/firestore-emulator
+  firebase-emulator:
+    image: spine3/firebase-emulator
     environment:
       PORT: 2021
-      FIRESTORE_PROJECT_ID: demo-laxmi-chit-fund-letsgetit
+      UI_ENABLED: "true"
+      UI_EMULATOR_PORT: 2020
+      FIRESTORE_EMULATOR_PORT: 2021
+      GCP_PROJECT: demo-laxmi-chit-fund-letsgetit
     ports:
+      - 2020:2020
       - 2021:2021

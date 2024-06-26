@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - firestore-emulator
+      - firebase-emulator
     container_name: laxmi-chit-fund-api
     working_dir: /app
     volumes:
@@ -21,10 +21,14 @@ services:
     command: uvicorn app.main:app --host 0.0.0.0 --port 2000 --reload
     restart: on-failure
 
-  firestore-emulator:
-    image: mtlynch/firestore-emulator
+  firebase-emulator:
+    image: spine3/firebase-emulator
     environment:
       PORT: 2021
-      FIRESTORE_PROJECT_ID: demo-laxmi-chit-fund-letsgetit
+      UI_ENABLED: "true"
+      UI_EMULATOR_PORT: 2020
+      FIRESTORE_EMULATOR_PORT: 2021
+      GCP_PROJECT: demo-laxmi-chit-fund-letsgetit
     ports:
+      - 2020:2020
       - 2021:2021
