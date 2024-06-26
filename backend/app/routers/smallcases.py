@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.daos.smallcases import SmallcaseDAO
 from app.schemas.smallcases import (
     IndexBase,
@@ -6,7 +8,7 @@ from app.schemas.smallcases import (
     SmallcaseIndexesBase,
     SmallcaseStatisticsBase,
 )
-from app.utils.dates import datestr, validate_date_range
+from app.utils.dates import dateparse, datestr, validate_date_range
 from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
@@ -33,8 +35,9 @@ async def create(smallcase: SmallcaseBase):
 
 @router.get("/{id}/constituents")
 async def get_constituents(id: str, date: str):
-    date = datestr(date)
-    constituents = await smallcaseDAO.get_constituents(id, date)
+    date = datestr(date, full_path=True)
+    latest = dateparse(date) >= datetime.now().date()
+    constituents = await smallcaseDAO.get_constituents(id, date, latest=latest)
     if not constituents:
         raise HTTPException(status_code=404, detail="Constituents not found")
     return constituents

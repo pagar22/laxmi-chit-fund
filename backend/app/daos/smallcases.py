@@ -10,6 +10,7 @@ from app.schemas.smallcases import (
 )
 from app.utils.dates import dateparse, datestr
 from dateutil.relativedelta import relativedelta
+from google.cloud.firestore_v1.base_query import FieldFilter
 
 
 class SmallcaseDAO(BaseDAO):
@@ -19,17 +20,9 @@ class SmallcaseDAO(BaseDAO):
     def __init__(self):
         super().__init__("smallcases")
 
-    async def get_constituents(self, id: str, date: str):
+    async def get_constituents(self, id: str, date: str, latest: bool = False):
         ref = self.collection_reference.document(id).collection("constituents")
-        query = (
-            ref.where("start_date", "<=", date).where("end_date", ">=", date).limit(1)
-        )
-        docs = await query.get()
-        if docs:
-            log.info(f"🥧 Fetched constituents for {id} at {date}")
-            return SmallcaseConstituentsBase(**docs[0].to_dict())
-
-        if True:
+        if latest:
             query = ref.order_by("start_date", direction="DESCENDING").limit(1)
             docs = await query.get()
             if docs:
@@ -38,7 +31,13 @@ class SmallcaseDAO(BaseDAO):
                 if now >= dateparse(constituents.end_date):
                     log.info(f"🤷‍♀️ Returning latest constituents for {id} at {date}")
                     return constituents
-        return None
+        else:
+            end_filter = FieldFilter("end_date", ">=", date)
+            filter_docs = await ref.where(filter=end_filter).get()
+            docs = [doc for doc in filter_docs if doc.get("start_date") <= date]
+            if docs:
+                log.info(f"🥧 Fetched constituents for {id} at {date}")
+                return SmallcaseConstituentsBase(**docs[0].to_dict())
 
     async def get_indexes(self, id: str, start_date: str, end_date: str):
         indexes = {}

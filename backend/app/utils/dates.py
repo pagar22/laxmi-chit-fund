@@ -6,17 +6,16 @@ DATE_PATH_FORMAT = "%Y-%m"
 DATE_VALIDATION_FORMAT = "%Y-%m-%d"
 
 
-def datestr(date: str) -> str:
+def datestr(date: str, full_path: bool = False) -> str:
     """
     FastAPI query param validator for date strings.
     Tests if the given date (str) is in the format YYYY-MM-DD. Raises ValueError if not.
-    - Parameters: date (str), format (str) defaulting to YYYY-MM-DD
-    - Returns: 0-padded date string of type YYYY-MM
+    - Parameters: date (str), full_path (bool) default is False
+    - Returns: 0-padded date string of type YYYY-MM-DD if full_path is True, else YYYY-MM
     """
     try:
-        return datetime.strptime(date, DATE_VALIDATION_FORMAT).strftime(
-            DATE_PATH_FORMAT
-        )
+        path_format = DATE_VALIDATION_FORMAT if full_path else DATE_PATH_FORMAT
+        return datetime.strptime(date, DATE_VALIDATION_FORMAT).strftime(path_format)
     except:
         error = f"{date} is not of the expected format YYYY-MM-DD"
         raise HTTPException(status_code=400, detail=error)

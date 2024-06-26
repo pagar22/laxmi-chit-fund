@@ -4,6 +4,7 @@ from app.daos.base import BaseDAO
 from app.schemas.tickers import CandleStickBase, TickerBase
 from app.utils.dates import dateparse, datestr
 from dateutil.relativedelta import relativedelta
+from google.cloud.firestore_v1.base_query import FieldFilter
 
 
 class TickerDAO(BaseDAO):
@@ -14,8 +15,8 @@ class TickerDAO(BaseDAO):
         super().__init__("tickers")
 
     async def get_by_smallcase_name(self, smallcase_name: str) -> Optional[TickerBase]:
-        query = self.collection_reference.where("smallcase_name", "==", smallcase_name)
-        docs = await query.get()
+        filter = FieldFilter("smallcase_name", "==", smallcase_name)
+        docs = await self.collection_reference.where(filter=filter).get()
         if len(docs):
             return self.model(**docs[0].to_dict())
 
