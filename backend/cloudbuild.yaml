@@ -1,0 +1,36 @@
+steps:
+  - name: "docker/compose"
+    id: "build-tests"
+    args: ["-f", "docker-compose-tests.yaml", "up", "-d"]
+
+  - name: "docker/compose"
+    id: "run-tests"
+    args:
+      [
+        "-f",
+        "docker-compose-tests.yaml",
+        "run",
+        "-e",
+        "PYTEST_ARGS='--maxfail=1 -v'",
+        "tests",
+      ]
+    waitFor: ["build-tests"]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA", "."]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA"]
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+    - "run"
+    - "deploy"
+    - "laxmi-chit-fund"
+    - "--image"
+    - "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA"
+    - "--region"
+    - "europe-west1"
+  images:
+  - "gcr.io/$PROJECT_ID/laxmi-chit-fund:$COMMIT_SHA"
