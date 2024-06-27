@@ -3,8 +3,7 @@ import asyncio
 import pytest
 import pytest_asyncio
 from app.internal.config import IS_EMULATOR_CONNECTED
-
-# from app.internal.firebase import log
+from app.internal.firebase import log
 from app.main import app
 from faker import Faker
 from firebase_admin import firestore_async
@@ -45,7 +44,7 @@ async def test_app():
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def cleanup():
     yield
-    # log.info("🫧 Cleaning Firestore emulator...")
+    log.info("🫧 Cleaning Firestore emulator...")
     db = firestore_async.client()
     db_collections = ["smallcases", "tickers"]
     for collection in db_collections:

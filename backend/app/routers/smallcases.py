@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List, Optional
 
 from app.daos.smallcases import SmallcaseDAO
 from app.schemas.smallcases import (
@@ -33,11 +34,22 @@ async def create(smallcase: SmallcaseBase):
     await smallcaseDAO.create(smallcase, smallcase.id)
 
 
-@router.get("/{id}/constituents")
+@router.get("/{id}/constituents", response_model=Optional[SmallcaseConstituentsBase])
 async def get_constituents(id: str, date: str):
     date = datestr(date, full_path=True)
     latest = dateparse(date) >= datetime.now().date()
     constituents = await smallcaseDAO.get_constituents(id, date, latest=latest)
+    if not constituents:
+        raise HTTPException(status_code=404, detail="Constituents not found")
+    return constituents
+
+
+@router.get(
+    "/{id}/constituents/stream",
+    response_model=Optional[List[SmallcaseConstituentsBase]],
+)
+async def get_constituents_stream(id: str):
+    constituents = await smallcaseDAO.get_constituents_stream(id)
     if not constituents:
         raise HTTPException(status_code=404, detail="Constituents not found")
     return constituents

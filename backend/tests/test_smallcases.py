@@ -36,6 +36,17 @@ async def test_get_smallcase_constituents(test_app, f_smallcase_constituents):
 
 
 @pytest.mark.asyncio
+async def test_get_smallcase_constituents_stream(test_app, f_smallcase_constituents):
+    # Given
+    id, constituents = await f_smallcase_constituents()
+    # When
+    resp = await test_app.get(url=f"/smallcases/{id}/constituents/stream")
+    # Test
+    assert resp.status_code == 200
+    assert len(resp.json()) == 1
+
+
+@pytest.mark.asyncio
 async def test_get_smallcase_indexes(test_app, f_smallcase_indexes):
     # Given
     id, indexes = await f_smallcase_indexes()
