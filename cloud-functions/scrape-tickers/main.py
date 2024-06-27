@@ -19,17 +19,20 @@ def main(request: Request):
         return (f"bad_request, smallcase_name or exchange_token required", 400)
     try:
         tickers = get_tickers_csv()
-        if smallcase_name:
+        if exchange_token:
+            ticker_row = tickers.query(f"exchange_token == {exchange_token}")
+            ticker = parse_ticker_from_row(ticker_row)
+            if smallcase_name:
+                ticker["smallcase_name"] = smallcase_name
+            post_ticker(ticker)
+
+        elif smallcase_name:
+            log.warn(f"💛 POST using smallcase_name is discouraged!")
             top_match = get_row_from_smallcase_name(tickers, smallcase_name)
             ticker = parse_ticker_from_row(top_match)
             ticker["smallcase_name"] = smallcase_name
             post_ticker(ticker)
 
-        elif exchange_token:
-            log.warn(f"💛 POST using exchange_token is discouraged!")
-            ticker_row = tickers.query(f"exchange_token == {exchange_token}")
-            ticker = parse_ticker_from_row(ticker_row)
-            post_ticker(ticker)
         return (f"success", 200)
 
     except RequestError as e:

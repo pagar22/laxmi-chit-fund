@@ -50,7 +50,7 @@ class SmallcaseDAO(BaseDAO):
     async def get_constituents_stream(self, id: str):
         ref = self.collection_reference.document(id).collection("constituents")
         max_quarters = 4 * 8  # 8 years max
-        query = ref.order_by("start_date", direction="DESCENDING").limit(max_quarters)
+        query = ref.order_by("start_date", direction="ASCENDING").limit(max_quarters)
         docs = await query.get()
         return [SmallcaseConstituentsBase(**doc.to_dict()) for doc in docs]
 
