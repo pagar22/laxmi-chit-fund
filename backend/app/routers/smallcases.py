@@ -29,11 +29,6 @@ async def get(id: str):
     return smallcase
 
 
-@router.post("/", status_code=201)
-async def create(smallcase: SmallcaseBase):
-    await smallcaseDAO.create(smallcase, smallcase.id)
-
-
 @router.get("/{id}/constituents", response_model=Optional[SmallcaseConstituentsBase])
 async def get_constituents(id: str, date: str):
     date = datestr(date, full_path=True)
@@ -55,15 +50,6 @@ async def get_constituents_stream(id: str):
     return constituents
 
 
-@router.post("/{id}/constituents", status_code=201)
-async def create_constituents(id: str, constituents: SmallcaseConstituentsBase):
-    smallcase = await smallcaseDAO.get(id)
-    if not smallcase:
-        raise HTTPException(status_code=404, detail="Smallcase not found")
-
-    await smallcaseDAO.create_constituents(id, constituents)
-
-
 @router.get("/{id}/indexes", response_model=dict[str, IndexBase])
 async def get_indexes(id: str, start_date: str, end_date: str):
     validate_date_range(start_date, end_date, max_days=365 * 5)
@@ -71,6 +57,29 @@ async def get_indexes(id: str, start_date: str, end_date: str):
     if not indexes:
         raise HTTPException(status_code=404, detail="Indexes not found")
     return indexes
+
+
+@router.get("/{id}/statistics", response_model=SmallcaseStatisticsBase)
+async def get_statistics(id: str, date: str):
+    date = datestr(date)
+    statistics = await smallcaseDAO.get_statistics(id, date)
+    if not statistics:
+        raise HTTPException(status_code=404, detail="Statistics not found")
+    return statistics
+
+
+@router.post("/", status_code=201)
+async def create(smallcase: SmallcaseBase):
+    await smallcaseDAO.create(smallcase, smallcase.id)
+
+
+@router.post("/{id}/constituents", status_code=201)
+async def create_constituents(id: str, constituents: SmallcaseConstituentsBase):
+    smallcase = await smallcaseDAO.get(id)
+    if not smallcase:
+        raise HTTPException(status_code=404, detail="Smallcase not found")
+
+    await smallcaseDAO.create_constituents(id, constituents)
 
 
 @router.post("/{id}/indexes", status_code=201)
@@ -81,15 +90,6 @@ async def create_indexes(id: str, indexes: SmallcaseIndexesBase, date: str):
         raise HTTPException(status_code=404, detail="Smallcase not found")
 
     await smallcaseDAO.create_indexes(id, indexes, date)
-
-
-@router.get("/{id}/statistics")
-async def get_statistics(id: str, date: str):
-    date = datestr(date)
-    statistics = await smallcaseDAO.get_statistics(id, date)
-    if not statistics:
-        raise HTTPException(status_code=404, detail="Statistics not found")
-    return statistics
 
 
 @router.post("/{id}/statistics", status_code=201)

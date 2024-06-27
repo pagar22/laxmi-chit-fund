@@ -23,12 +23,6 @@ async def get_by_smallcase_name(smallcase_name: str):
     return ticker
 
 
-@router.post("/", status_code=201)
-async def create(ticker: TickerBase):
-    id = str(ticker.exchange_token)
-    await tickerDAO.create(ticker, id)
-
-
 @router.get("/{id}/candles", response_model=dict[str, CandleBase])
 async def get_candle_sticks_range(id: str, start_date: str, end_date: str):
     validate_date_range(start_date, end_date, max_days=365 * 1)
@@ -45,6 +39,12 @@ async def get_candle_sticks_monthly(id: str, date: str):
     if not candle:
         raise HTTPException(status_code=404, detail="Candles not found")
     return candle
+
+
+@router.post("/", status_code=201)
+async def create(ticker: TickerBase):
+    id = str(ticker.exchange_token)
+    await tickerDAO.create(ticker, id)
 
 
 @router.post("/{id}/candles", status_code=201)
