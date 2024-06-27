@@ -47,6 +47,13 @@ class SmallcaseDAO(BaseDAO):
                 log.info(f"🥧 Fetched constituents for {id} at {date}")
                 return SmallcaseConstituentsBase(**docs[0].to_dict())
 
+    async def get_constituents_stream(self, id: str):
+        ref = self.collection_reference.document(id).collection("constituents")
+        max_quarters = 4 * 8  # 8 years max
+        query = ref.order_by("start_date", direction="ASCENDING").limit(max_quarters)
+        docs = await query.get()
+        return [SmallcaseConstituentsBase(**doc.to_dict()) for doc in docs]
+
     async def get_indexes(self, id: str, start_date: str, end_date: str):
         indexes = {}
         end = dateparse(end_date)

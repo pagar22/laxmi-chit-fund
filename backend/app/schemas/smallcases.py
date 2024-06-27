@@ -69,6 +69,7 @@ class ConstituentBase(BaseModel):
     original_weightage: float
     # has_no_candles: Optional[bool] = False
     kelly_weightage: Optional[float] = None
+    half_kelly_weightage: Optional[float] = None
     standard_deviation: Optional[float] = None
 
 
