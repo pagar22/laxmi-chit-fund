@@ -32,7 +32,7 @@ export const SmallcasePerformanceChart = ({ smallcase }) => {
       return {
         labels: Array.from(labels),
         datasets: [
-          // { data: kellyData, color: () => colors.kelly },
+          { data: kellyData, color: () => colors.kelly },
           { data: benchmarkData, color: () => colors.benchmark },
           { data: smallcaseData, color: () => colors.smallcase },
         ],
