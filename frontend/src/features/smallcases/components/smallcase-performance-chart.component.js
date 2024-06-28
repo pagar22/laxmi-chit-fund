@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
+import { Box, HStack, Spinner, Text, VStack } from "@gluestack-ui/themed";
 import { Dimensions } from "react-native";
-import { Box, HStack, Text, VStack } from "@gluestack-ui/themed";
 import { LineChart } from "react-native-chart-kit";
 import { useSmallcaseIndexes } from "features/smallcases/hooks/useSmallcaseIndexes";
 
@@ -9,8 +9,8 @@ export const SmallcasePerformanceChart = ({ smallcase }) => {
   const [data, setData] = useState(undefined);
   const indexes = useSmallcaseIndexes(smallcase?.id);
   const colors = {
-    kelly: "#FFD700",
-    benchmark: "#40E0D0",
+    kelly: "#9FE394",
+    benchmark: "#FFD700",
     smallcase: "#DC143C",
   };
 
@@ -68,21 +68,21 @@ export const SmallcasePerformanceChart = ({ smallcase }) => {
             p={12}
             mb={20}
             space={"md"}
-            bg={"$trueGray700"}
             borderRadius={10}
+            bg={"$trueGray800"}
           >
             <Text mb={-5} size={"lg"} bold>
               Legend
             </Text>
             <HStack justifyContent={"space-between"}>
-              {/* <LegendDetail color={colors.kelly} text={"Kelly"} /> */}
+              <LegendDetail color={colors.kelly} text={"Kelly"} />
               <LegendDetail color={colors.benchmark} text={"Benchmark"} />
               <LegendDetail color={colors.smallcase} text={"Smallcase"} />
             </HStack>
           </VStack>
         </>
       ) : (
-        <></>
+        <Spinner m={10} alignSelf={"flex-start"} />
       )}
     </VStack>
   );
@@ -91,7 +91,7 @@ export const SmallcasePerformanceChart = ({ smallcase }) => {
 const LegendDetail = ({ color, text }) => {
   return (
     <HStack space={"md"}>
-      <Box p={3} bg={color} />
+      <Box p={4} bg={color} />
       <Text>{text}</Text>
     </HStack>
   );

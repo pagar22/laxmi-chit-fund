@@ -4,7 +4,6 @@ import {
   FlatList,
   HStack,
   Image,
-  Spinner,
   Switch,
   Text,
   VStack,
@@ -19,12 +18,11 @@ import { SmallcasePerformanceChart } from "features/smallcases/components/smallc
 
 export const SmallcaseDetailScreen = ({ navigation, route }) => {
   const { id } = route.params;
-  const now = formatDate();
-  const [date, setDate] = useState(now);
   const [kelly, setKelly] = useState(false);
 
+  const now = formatDate();
   const smallcase = useSmallcase(id);
-  const constituents = useSmallcaseConstituents(id, date);
+  const constituents = useSmallcaseConstituents(id, now);
 
   return (
     <ScreenFrame>
@@ -66,18 +64,18 @@ export const SmallcaseDetailScreen = ({ navigation, route }) => {
             </Text>
           ))}
         </HStack>
-        <HStack mt={10} justifyContent={"space-between"}>
+        <HStack mt={10} justifyContent={"space-between"} alignItems={"center"}>
           <Text size={"md"} bold>
             Constituents
           </Text>
-          <HStack space={"xl"}>
-            <Text color={"$tertiary300"} bold>
+          <HStack space={"xl"} alignItems={"center"}>
+            <Text color={kelly ? "#9FE394" : "#fff"} bold>
               Kelly
             </Text>
             <Switch
               value={kelly}
               onValueChange={setKelly}
-              trackColor={{ true: "$tertiary300", false: "$trueGray300" }}
+              trackColor={{ true: "#9FE394", false: "$trueGray300" }}
             />
           </HStack>
         </HStack>
@@ -85,7 +83,7 @@ export const SmallcaseDetailScreen = ({ navigation, route }) => {
           <Text size={"md"}>Name</Text>
           <Text size={"md"}>{`Weightage (%)`}</Text>
         </HStack>
-        <Divider bg={"white"} />
+        <Divider bg={"#fff"} />
         <FlatList
           data={constituents.data?.constituents}
           renderItem={({ item, index }) => (
@@ -97,11 +95,11 @@ export const SmallcaseDetailScreen = ({ navigation, route }) => {
                 <Text
                   size={"sm"}
                   textAlign={"right"}
-                  color={kelly ? "$tertiary300" : "white"}
+                  color={kelly ? "#9FE394" : "#fff"}
                 >
                   {`${rounded(
                     kelly
-                      ? item.kelly_weightage || 0
+                      ? item.adjusted_kelly_weightage * 100 || 0
                       : item.original_weightage * 100
                   )} %`}
                 </Text>
