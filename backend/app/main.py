@@ -2,7 +2,7 @@ from app.internal.middelware import app_middleware
 from app.routers import internal, smallcases, tickers
 from fastapi import FastAPI
 
-app = FastAPI()
+app = FastAPI(title="Laxmi Chit Fund")
 
 app.include_router(internal.router)
 app.include_router(tickers.router, prefix="/tickers", tags=["Tickers"])
