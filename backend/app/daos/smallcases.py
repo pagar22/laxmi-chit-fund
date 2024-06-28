@@ -85,7 +85,7 @@ class SmallcaseDAO(BaseDAO):
         return None
 
     async def create_constituents(self, id: str, payload: SmallcaseConstituentsBase):
-        date = payload.start_date
+        date = datestr(payload.start_date)
         data = self._model_dump_json(payload)
         await self._create_nested_hist_doc(id, "constituents", date, data)
 
