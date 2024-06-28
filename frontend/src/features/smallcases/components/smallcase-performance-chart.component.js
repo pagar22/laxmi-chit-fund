@@ -64,20 +64,35 @@ export const SmallcasePerformanceChart = ({ smallcase }) => {
             }}
             style={{ marginVertical: 16, borderRadius: 16 }}
           />
-          <Box p={5} px={10} mb={20} bg={"$trueGray700"} borderRadius={10}>
-            <Text mb={5} size={"lg"} bold textAlign={"center"}>
+          <VStack
+            p={12}
+            mb={20}
+            space={"md"}
+            bg={"$trueGray700"}
+            borderRadius={10}
+          >
+            <Text mb={-5} size={"lg"} bold>
               Legend
             </Text>
-            <HStack justifyContent={"space-evenly"}>
-              {/* <Text color={colors.kelly}>Kelly</Text> */}
-              <Text color={colors.benchmark}>Benchmark</Text>
-              <Text color={colors.smallcase}>Smallcase</Text>
+            <HStack justifyContent={"space-between"}>
+              {/* <LegendDetail color={colors.kelly} text={"Kelly"} /> */}
+              <LegendDetail color={colors.benchmark} text={"Benchmark"} />
+              <LegendDetail color={colors.smallcase} text={"Smallcase"} />
             </HStack>
-          </Box>
+          </VStack>
         </>
       ) : (
         <></>
       )}
     </VStack>
+  );
+};
+
+const LegendDetail = ({ color, text }) => {
+  return (
+    <HStack space={"md"}>
+      <Box p={3} bg={color} />
+      <Text>{text}</Text>
+    </HStack>
   );
 };
