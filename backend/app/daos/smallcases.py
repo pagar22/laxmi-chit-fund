@@ -89,7 +89,8 @@ class SmallcaseDAO(BaseDAO):
         data = self._model_dump_json(payload)
         await self._create_nested_hist_doc(id, "constituents", date, data)
 
-    async def create_indexes(self, id: str, payload: SmallcaseIndexesBase, date: str):
+    async def create_indexes(self, id: str, payload: SmallcaseIndexesBase):
+        date = datestr(payload.start_date)
         data = self._model_dump_json(payload, exclude_none=True)
         await self._create_nested_hist_doc(id, "indexes", date, data)
 

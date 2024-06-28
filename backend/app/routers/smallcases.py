@@ -83,13 +83,12 @@ async def create_constituents(id: str, constituents: SmallcaseConstituentsBase):
 
 
 @router.post("/{id}/indexes", status_code=201)
-async def create_indexes(id: str, indexes: SmallcaseIndexesBase, date: str):
-    date = datestr(date)
+async def create_indexes(id: str, indexes: SmallcaseIndexesBase):
     smallcase = await smallcaseDAO.get(id)
     if not smallcase:
         raise HTTPException(status_code=404, detail="Smallcase not found")
 
-    await smallcaseDAO.create_indexes(id, indexes, date)
+    await smallcaseDAO.create_indexes(id, indexes)
 
 
 @router.post("/{id}/statistics", status_code=201)
