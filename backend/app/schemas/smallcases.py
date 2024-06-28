@@ -70,6 +70,7 @@ class ConstituentBase(BaseModel):
     # has_no_candles: Optional[bool] = False
     kelly_weightage: Optional[float] = None
     half_kelly_weightage: Optional[float] = None
+    adjusted_kelly_weightage: Optional[float] = None
     standard_deviation: Optional[float] = None
 
 
@@ -90,6 +91,7 @@ class IndexBase(BaseModel):
     smallcase: float
     benchmark: float
     kelly: Optional[float] = None
+    smallcase_adjusted: Optional[float] = None
 
 
 class SmallcaseIndexesBase(BaseModel):

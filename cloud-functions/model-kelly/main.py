@@ -25,7 +25,7 @@ def main(request: Request):
     constituents = requests.get(
         f"{LAXMI_API_URL}/smallcases/{smallcase_id}/constituents/stream"
     ).json()
-    print(f"{len(constituents)} constituent rebalances found")
+    LOG.info(f"{len(constituents)} constituent rebalances found")
 
     failed = []
     ticker_not_found = 0
@@ -36,7 +36,7 @@ def main(request: Request):
         start_date = datetime.strptime(end_date, DATE_FORMAT)
         start_date = start_date - relativedelta(months=no_of_prev_quarters * 3)
         start_date = start_date.strftime(DATE_FORMAT)
-        print(f"Date range: {start_date} to {end_date}")
+        LOG.info(f"Date range: {start_date} to {end_date}")
 
         df_indexes = get_indexes_df(smallcase_id, start_date, end_date)
         df_indexes["benchmark"].to_frame()
@@ -44,14 +44,14 @@ def main(request: Request):
         kelly_constituents = []
         for constituent in quarter["constituents"]:
             smallcase_name = constituent["smallcase_name"]
-            print(f"Calculating {smallcase_name}...")
+            LOG.info(f"Calculating {smallcase_name}...")
             try:
                 df, df_close = get_candles_df(smallcase_name, start_date, end_date)
                 variance = get_variance(df_close)
                 expected_returns = get_expected_returns(df_close, df_indexes)
                 kelly = get_kelly_weightage(expected_returns, variance)
             except TickerNotFoundException:
-                print("Ticker not found, using same kelly weightage")
+                LOG.info("Ticker not found, using same kelly weightage")
                 ticker_not_found += 1
                 kelly = constituent["original_weightage"]
 
@@ -64,9 +64,12 @@ def main(request: Request):
             kelly_constituents.append(kelly_constituent)
 
         kelly_payload = {**quarter}
-        kelly_payload["constituents"] = kelly_constituents
+        adjusted_kelly_constituents = get_adjusted_kelly_constituents(
+            kelly_constituents
+        )
+        kelly_payload["constituents"] = adjusted_kelly_constituents
 
-        print(kelly_payload)
+        LOG.info(kelly_payload)
         status = post_kelly_smallcase(smallcase_id, kelly_payload)
         if not status in [200, 201]:
             failed.append(quarter)
@@ -125,10 +128,10 @@ def get_expected_returns(candles: DF, indexes: DF):
     ]
     market_variance = np.var(candles["benchmark_returns"])
     beta = covariance / market_variance
-
     # 10 year averages
     risk_free_rate = 0.06
     expected_market_return = 0.12
+
     expected_return = risk_free_rate + beta * (expected_market_return - risk_free_rate)
     return expected_return / 252
 
@@ -139,6 +142,15 @@ def get_kelly_weightage(expected_return: float, variance: float):
 
     kelly_weightage = (expected_return - adjusted_risk_free_rate) / variance
     return kelly_weightage
+
+
+def get_adjusted_kelly_constituents(constituents: list):
+    total_kelly_weight = sum(float(c["kelly_weightage"]) for c in constituents)
+    for c in constituents:
+        c["adjusted_kelly_weightage"] = "{:,.6f}".format(
+            (float(c["kelly_weightage"]) / total_kelly_weight)
+        )
+    return constituents
 
 
 def post_kelly_smallcase(smallcase_id: str, payload: dict):
