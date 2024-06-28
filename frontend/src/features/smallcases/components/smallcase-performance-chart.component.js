@@ -24,18 +24,22 @@ export const SmallcasePerformanceChart = ({ smallcase }) => {
 
       Object.keys(data).forEach((date) => {
         labels.add(dayjs(date).format("MMM YY"));
-        benchmarkData.push(data[date].benchmark);
         kellyData.push(data[date].kelly || 0);
+        benchmarkData.push(data[date].benchmark);
         smallcaseData.push(data[date].smallcase);
       });
 
+      const datasets = [
+        { data: benchmarkData, color: () => colors.benchmark },
+        { data: smallcaseData, color: () => colors.smallcase },
+      ];
+      if (!kellyData?.every((value) => value === 0)) {
+        datasets.push({ data: kellyData, color: () => colors.kelly });
+      }
+
       return {
+        datasets: datasets,
         labels: Array.from(labels),
-        datasets: [
-          { data: kellyData, color: () => colors.kelly },
-          { data: benchmarkData, color: () => colors.benchmark },
-          { data: smallcaseData, color: () => colors.smallcase },
-        ],
       };
     }
   }, [indexes.isSuccess]);
