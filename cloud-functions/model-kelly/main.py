@@ -129,16 +129,16 @@ def get_expected_returns(candles: DF, indexes: DF):
     market_variance = np.var(candles["benchmark_returns"])
     beta = covariance / market_variance
     # 10 year averages
-    risk_free_rate = 0.06
+    risk_free_rate = 0.068
     expected_market_return = 0.12
 
     expected_return = risk_free_rate + beta * (expected_market_return - risk_free_rate)
-    return expected_return / 252
+    return expected_return / 247
 
 
 def get_kelly_weightage(expected_return: float, variance: float):
     annual_risk_free_rate = 0.068
-    adjusted_risk_free_rate = (1 + annual_risk_free_rate) ** (1 / 252) - 1
+    adjusted_risk_free_rate = (1 + annual_risk_free_rate) ** (1 / 247) - 1
 
     kelly_weightage = (expected_return - adjusted_risk_free_rate) / variance
     return kelly_weightage
