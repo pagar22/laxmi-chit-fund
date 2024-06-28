@@ -87,7 +87,7 @@ export const AuthenticationContextProvider = ({ children }) => {
         } else {
           console.debug("👍 Session active. Auth not needed.", user.uid);
           await new Promise((res) => setTimeout(res, 2000));
-          const claims = await user.getIdTokenResult();
+          const claims = await user.getIdTokenResult((forceRefresh = true));
           const userWithClaims = Object.assign({}, user.toJSON(), claims);
           setUser(userWithClaims);
           setIsLoading(false);
