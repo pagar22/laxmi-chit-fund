@@ -3,8 +3,7 @@ import re
 import functions_framework
 import requests
 from flask import Request
-
-from .config import LAXMI_API_URL, LAXMI_CUD_API_KEY, SMALLCASE_API_URL, log
+from utils.config import LAXMI_API_URL, LAXMI_CUD_API_KEY, SMALLCASE_API_URL, log
 
 
 @functions_framework.http

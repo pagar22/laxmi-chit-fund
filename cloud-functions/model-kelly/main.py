@@ -7,8 +7,7 @@ import requests
 from dateutil.relativedelta import relativedelta
 from flask import Request
 from pandas import DataFrame as DF
-
-from .config import (
+from utils.config import (
     DATE_FORMAT,
     LAXMI_API_URL,
     LAXMI_CUD_API_KEY,
