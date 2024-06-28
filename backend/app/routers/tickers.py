@@ -25,7 +25,7 @@ async def get_by_smallcase_name(smallcase_name: str):
 
 @router.get("/{id}/candles", response_model=dict[str, CandleBase])
 async def get_candle_sticks_range(id: str, start_date: str, end_date: str):
-    validate_date_range(start_date, end_date, max_days=365 * 1)
+    validate_date_range(start_date, end_date, max_days=365 * 2)
     candles = await tickerDAO.get_candle_sticks(id, start_date, end_date)
     if not candles:
         raise HTTPException(status_code=404, detail="Candles not found")
