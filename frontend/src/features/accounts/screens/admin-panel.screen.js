@@ -22,24 +22,19 @@ const TriggerFunctionPanel = ({ item }) => {
 
   const invokeFunction = async () => {
     setIsLoading(true);
-    time = 3000 + Math.random() * 1000;
-    await new Promise((res) => setTimeout(res, time));
-    setIsLoading(false);
-    setTriggerState("success");
-
-    // console.log(`🚀 Invoking ${item.name}`);
-    // return item
-    //   .function()
-    //   .then((result) => {
-    //     setIsLoading(false);
-    //     setTriggerState("success");
-    //     return result.data;
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //     setIsLoading(false);
-    //     setTriggerState("failure");
-    //   });
+    console.log(`🚀 Invoking ${item.name}`);
+    return item
+      .function()
+      .then((result) => {
+        setIsLoading(false);
+        setTriggerState("success");
+        return result.data;
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+        setTriggerState("failure");
+      });
   };
 
   return (

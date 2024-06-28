@@ -2,7 +2,7 @@
 
 Infrastructure to support the research and experimentation of my undergrad thesis in software engineering, assessing:
 
-> **To what extent are Smallcases Kelly-Optimal, and how can their risk adjusted excess return be maximised?**
+> **To what extent are Smallcases Kelly-Optimal, and how can their collective risk adjusted excess return be maximised?**
 
 ## Structure
 
