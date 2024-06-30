@@ -68,9 +68,11 @@ class ConstituentBase(BaseModel):
     smallcase_name: str
     original_weightage: float
     # has_no_candles: Optional[bool] = False
+
     kelly_weightage: Optional[float] = None
     half_kelly_weightage: Optional[float] = None
     adjusted_kelly_weightage: Optional[float] = None
+
     standard_deviation: Optional[float] = None
 
 
@@ -78,7 +80,9 @@ class SmallcaseConstituentsBase(BaseModel):
     start_date: str
     end_date: str
     constituents: list[ConstituentBase]
-    average_standard_deviation: Optional[float] = None
+
+    average_kelly_standard_deviation: Optional[float] = None
+    average_original_standard_deviation: Optional[float] = None
 
     @field_validator("start_date", "end_date")
     def validate_dates(cls, v):
