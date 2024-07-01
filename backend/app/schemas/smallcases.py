@@ -67,7 +67,9 @@ class SmallcaseBase(BaseModel):
 class ConstituentBase(BaseModel):
     smallcase_name: str
     original_weightage: float
-    # has_no_candles: Optional[bool] = False
+
+    # kelly_shares_purchasable: Optional[float] = None
+    # original_shares_purchasable: Optional[float] = None
 
     kelly_weightage: Optional[float] = None
     half_kelly_weightage: Optional[float] = None
